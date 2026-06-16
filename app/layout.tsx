@@ -24,9 +24,10 @@ export const metadata: Metadata = {
 // to pass it through without a type error.
 // Disabling this prevents router.refresh() from competing with Clerk's session handshake
 // redirect on first login with a new account, which causes a blank page.
-const clerkClientProps = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const clerkClientProps: any = {
   __internal_invokeMiddlewareOnAuthStateChange: false,
-} as any;
+};
 
 export default function RootLayout({
   children,
