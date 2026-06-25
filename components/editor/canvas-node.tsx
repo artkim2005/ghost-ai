@@ -106,6 +106,8 @@ function ColorSwatch({
   return (
     <button
       className="w-4 h-4 rounded-full focus:outline-none"
+      aria-label={`Set color ${color.fill}`}
+      title={color.fill}
       style={{ background: color.fill, boxShadow: shadow, transition: "box-shadow 0.12s" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
