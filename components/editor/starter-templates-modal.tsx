@@ -133,6 +133,8 @@ function TemplatePreview({ template }: { template: CanvasTemplate }) {
     <svg
       viewBox={`${minX} ${minY} ${vw} ${vh}`}
       className="w-full h-full"
+      aria-hidden="true"
+      focusable="false"
       style={{ display: "block" }}
     >
       {edges.map((edge) => {
