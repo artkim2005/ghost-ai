@@ -198,7 +198,7 @@ export function StarterTemplatesModal({ open, onClose, onImport }: StarterTempla
             Choose a starter template to pre-populate your canvas. Any existing nodes will be
             replaced — use{" "}
             <kbd className="rounded border border-surface-border bg-subtle px-1 py-0.5 font-mono text-xs text-copy-primary">
-              ⌘Z
+              Cmd/Ctrl+Z
             </kbd>{" "}
             to undo.
           </DialogDescription>
