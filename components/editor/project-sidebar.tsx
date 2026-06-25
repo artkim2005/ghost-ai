@@ -3,16 +3,17 @@
 import { X, Plus, Pencil, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import type { MockProject } from "@/lib/mock-projects"
+import type { SidebarProject } from "@/lib/projects"
 
 interface ProjectSidebarProps {
   isOpen: boolean
   onClose: () => void
-  myProjects: MockProject[]
-  sharedProjects: MockProject[]
+  myProjects: SidebarProject[]
+  sharedProjects: SidebarProject[]
   onOpenCreate: () => void
-  onOpenRename: (project: MockProject) => void
-  onOpenDelete: (project: MockProject) => void
+  onOpenRename: (project: SidebarProject) => void
+  onOpenDelete: (project: SidebarProject) => void
+  onOpenProject: (project: SidebarProject) => void
 }
 
 export function ProjectSidebar({
@@ -23,6 +24,7 @@ export function ProjectSidebar({
   onOpenCreate,
   onOpenRename,
   onOpenDelete,
+  onOpenProject,
 }: ProjectSidebarProps) {
   return (
     <>
@@ -71,33 +73,38 @@ export function ProjectSidebar({
                   {myProjects.map((project) => (
                     <li
                       key={project.id}
-                      className="group flex items-center gap-2 rounded-xl px-2 py-1.5 hover:bg-elevated"
+                      className="group flex items-center gap-2 rounded-xl px-2 py-1.5 hover:bg-elevated cursor-pointer"
+                      onClick={() => onOpenProject(project)}
                     >
                       <span className="flex-1 truncate text-sm text-copy-primary">
                         {project.name}
                       </span>
-                      {project.owned && (
-                        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100">
-                          <Button
-                            variant="ghost"
-                            size="icon-xs"
-                            className="text-copy-muted hover:text-copy-primary"
-                            onClick={() => onOpenRename(project)}
-                          >
-                            <Pencil className="h-3 w-3" />
-                            <span className="sr-only">Rename</span>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon-xs"
-                            className="text-copy-muted hover:text-error"
-                            onClick={() => onOpenDelete(project)}
-                          >
-                            <Trash2 className="h-3 w-3" />
-                            <span className="sr-only">Delete</span>
-                          </Button>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100">
+                        <Button
+                          variant="ghost"
+                          size="icon-xs"
+                          className="text-copy-muted hover:text-copy-primary"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onOpenRename(project)
+                          }}
+                        >
+                          <Pencil className="h-3 w-3" />
+                          <span className="sr-only">Rename</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon-xs"
+                          className="text-copy-muted hover:text-error"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onOpenDelete(project)
+                          }}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                          <span className="sr-only">Delete</span>
+                        </Button>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -114,7 +121,8 @@ export function ProjectSidebar({
                   {sharedProjects.map((project) => (
                     <li
                       key={project.id}
-                      className="flex items-center rounded-xl px-2 py-1.5 hover:bg-elevated"
+                      className="flex items-center rounded-xl px-2 py-1.5 hover:bg-elevated cursor-pointer"
+                      onClick={() => onOpenProject(project)}
                     >
                       <span className="flex-1 truncate text-sm text-copy-primary">
                         {project.name}
