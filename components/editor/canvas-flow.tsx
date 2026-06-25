@@ -131,11 +131,12 @@ function CanvasFlowInner({ pendingTemplate, onTemplateApplied }: CanvasFlowInner
     ])
     onEdgesChange([
       ...edges.map((e) => ({ type: "remove" as const, id: e.id })),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line `@typescript-eslint/no-explicit-any`
       ...pendingTemplate.edges.map((e) => ({ type: "add" as const, item: e as any })),
     ])
-    setTimeout(() => fitView({ duration: ZOOM_DURATION }), 80)
     onTemplateApplied?.()
+    const fitTimer = setTimeout(() => fitView({ duration: ZOOM_DURATION }), 80)
+    return () => clearTimeout(fitTimer)
     // Run only when a new template is selected, not on every nodes/edges change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingTemplate])
