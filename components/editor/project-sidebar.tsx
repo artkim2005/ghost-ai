@@ -10,6 +10,7 @@ interface ProjectSidebarProps {
   onClose: () => void
   myProjects: SidebarProject[]
   sharedProjects: SidebarProject[]
+  activeProjectId?: string
   onOpenCreate: () => void
   onOpenRename: (project: SidebarProject) => void
   onOpenDelete: (project: SidebarProject) => void
@@ -21,6 +22,7 @@ export function ProjectSidebar({
   onClose,
   myProjects,
   sharedProjects,
+  activeProjectId,
   onOpenCreate,
   onOpenRename,
   onOpenDelete,
@@ -73,7 +75,11 @@ export function ProjectSidebar({
                   {myProjects.map((project) => (
                     <li
                       key={project.id}
-                      className="group flex items-center gap-2 rounded-xl px-2 py-1.5 hover:bg-elevated cursor-pointer"
+                      className={`group flex items-center gap-2 rounded-xl px-2 py-1.5 cursor-pointer ${
+                        project.id === activeProjectId
+                          ? "bg-elevated"
+                          : "hover:bg-elevated"
+                      }`}
                       onClick={() => onOpenProject(project)}
                     >
                       <span className="flex-1 truncate text-sm text-copy-primary">
@@ -121,7 +127,11 @@ export function ProjectSidebar({
                   {sharedProjects.map((project) => (
                     <li
                       key={project.id}
-                      className="flex items-center rounded-xl px-2 py-1.5 hover:bg-elevated cursor-pointer"
+                      className={`flex items-center rounded-xl px-2 py-1.5 cursor-pointer ${
+                        project.id === activeProjectId
+                          ? "bg-elevated"
+                          : "hover:bg-elevated"
+                      }`}
                       onClick={() => onOpenProject(project)}
                     >
                       <span className="flex-1 truncate text-sm text-copy-primary">

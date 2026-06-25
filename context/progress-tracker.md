@@ -3,7 +3,7 @@
 Update this file whenever the current phase, active feature, or implementation state changes.
 
 ## Current Phase
-- Feature 07 complete.
+- Feature 09 complete.
 
 ## Current Goal
 - Awaiting next feature spec.
@@ -17,6 +17,8 @@ Update this file whenever the current phase, active feature, or implementation s
 - Feature 05: Prisma — Project and ProjectCollaborator models in prisma/models/project.prisma (ProjectStatus enum DRAFT/ARCHIVED, cascade delete, unique project/email constraint, indexes on ownerId, createdAt, email, projectId/createdAt); lib/prisma.ts cached singleton branching on DATABASE_URL (prisma+postgres:// → accelerateUrl, postgres:// → @prisma/adapter-pg); migration 20260616200841_init applied; client generated to app/generated/prisma/.
 - Feature 06: Project APIs — REST endpoints in app/api/projects/route.ts (GET lists owner's projects ordered by createdAt desc; POST creates project with default name "Untitled Project") and app/api/projects/[projectId]/route.ts (PATCH renames, DELETE deletes); 401 for unauthenticated, 403 for non-owner mutations; uses Clerk auth() and Prisma; no UI wiring.
 - Feature 07: Wire Editor Home — editor/page.tsx converted to RSC; fetches owned projects (by userId) and shared projects (by email via ProjectCollaborator) server-side using lib/projects.ts helpers; EditorHomeClient client shell holds sidebar toggle state; useProjectActions hook manages all dialog state + API calls (create with client-generated room ID slug-suffix, rename with refresh, delete with redirect-or-refresh); project-sidebar and project-dialogs updated to use real SidebarProject type and wire handleCreate/handleRename/handleDelete; POST /api/projects accepts optional client-provided id for room ID alignment; mock-projects.ts and use-project-dialogs.ts removed.
+- Feature 08: Editor Workspace Shell — lib/project-access.ts with getCurrentIdentity() (Clerk userId + primary email) and getProjectWithAccess() (owner or collaborator check); components/editor/access-denied.tsx (centered, lock icon, message, back link); app/editor/[roomId]/page.tsx RSC with auth redirect, access check, parallel data fetch, AccessDenied on missing/unauthorized; components/editor/editor-workspace-client.tsx client shell with sidebar toggle + AI sidebar toggle state, workspace navbar (project name center, share + AI toggle + UserButton right), ProjectSidebar with activeProjectId highlighting, canvas placeholder, AI sidebar slide-over placeholder; ProjectSidebar updated with optional activeProjectId prop to highlight current room.
+- Feature 09: Share Dialog — app/api/projects/[projectId]/collaborators/route.ts (GET list with Clerk enrichment — name + imageUrl from getUserList; POST invite owner-only; DELETE remove owner-only; all with auth + ownership enforcement); components/editor/share-dialog.tsx (owner: invite input + remove-per-row + copy link with Copied! feedback; collaborator: read-only list; avatar with initial fallback); getProjectWithAccess now returns isOwner; EditorWorkspaceClient passes isOwner to ShareDialog and wires Share button to open it.
 
 ## In Progress
 
