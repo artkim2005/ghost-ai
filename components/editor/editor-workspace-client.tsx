@@ -1,15 +1,17 @@
 "use client"
 
 import { useState } from "react"
-import { PanelLeftOpen, PanelLeftClose, Share2, Sparkles, X } from "lucide-react"
+import { PanelLeftOpen, PanelLeftClose, Share2, Sparkles, X, LayoutTemplate } from "lucide-react"
 import { UserButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { ProjectSidebar } from "@/components/editor/project-sidebar"
 import { ProjectDialogs } from "@/components/editor/project-dialogs"
 import { ShareDialog } from "@/components/editor/share-dialog"
+import { StarterTemplatesModal } from "@/components/editor/starter-templates-modal"
 import { useProjectActions } from "@/hooks/use-project-actions"
 import { CanvasRoom } from "@/components/editor/canvas-room"
 import type { SidebarProject } from "@/lib/projects"
+import type { CanvasTemplate } from "@/components/editor/starter-templates"
 
 interface EditorWorkspaceClientProps {
   project: { id: string; name: string; isOwner: boolean }
@@ -25,6 +27,8 @@ export function EditorWorkspaceClient({
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [aiSidebarOpen, setAiSidebarOpen] = useState(false)
   const [shareOpen, setShareOpen] = useState(false)
+  const [templatesOpen, setTemplatesOpen] = useState(false)
+  const [pendingTemplate, setPendingTemplate] = useState<CanvasTemplate | null>(null)
   const actions = useProjectActions()
 
   return (
@@ -46,6 +50,15 @@ export function EditorWorkspaceClient({
         </div>
         <span className="text-sm font-medium text-copy-primary">{project.name}</span>
         <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTemplatesOpen(true)}
+            className="text-copy-muted hover:text-copy-primary"
+          >
+            <LayoutTemplate className="h-5 w-5" />
+            <span className="sr-only">Starter Templates</span>
+          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -73,7 +86,11 @@ export function EditorWorkspaceClient({
       </header>
 
       <main className="relative flex-1 bg-base">
-        <CanvasRoom roomId={project.id} />
+        <CanvasRoom
+          roomId={project.id}
+          pendingTemplate={pendingTemplate}
+          onTemplateApplied={() => setPendingTemplate(null)}
+        />
       </main>
 
       <ProjectSidebar
@@ -115,6 +132,12 @@ export function EditorWorkspaceClient({
         projectId={project.id}
         projectName={project.name}
         isOwner={project.isOwner}
+      />
+
+      <StarterTemplatesModal
+        open={templatesOpen}
+        onClose={() => setTemplatesOpen(false)}
+        onImport={(template) => setPendingTemplate(template)}
       />
 
       <ProjectDialogs actions={actions} />

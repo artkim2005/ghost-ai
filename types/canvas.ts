@@ -44,3 +44,7 @@ export interface ShapeDragPayload {
   width: number;
   height: number;
 }
+
+export interface CanvasEdgeData extends Record<string, unknown> {
+  label?: string;
+}
