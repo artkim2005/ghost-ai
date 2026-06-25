@@ -8,6 +8,7 @@ import { ProjectSidebar } from "@/components/editor/project-sidebar"
 import { ProjectDialogs } from "@/components/editor/project-dialogs"
 import { ShareDialog } from "@/components/editor/share-dialog"
 import { useProjectActions } from "@/hooks/use-project-actions"
+import { CanvasRoom } from "@/components/editor/canvas-room"
 import type { SidebarProject } from "@/lib/projects"
 
 interface EditorWorkspaceClientProps {
@@ -72,9 +73,7 @@ export function EditorWorkspaceClient({
       </header>
 
       <main className="relative flex-1 bg-base">
-        <div className="flex h-full items-center justify-center">
-          <p className="text-sm text-copy-faint">Canvas coming soon</p>
-        </div>
+        <CanvasRoom roomId={project.id} />
       </main>
 
       <ProjectSidebar
