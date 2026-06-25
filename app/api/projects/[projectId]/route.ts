@@ -21,15 +21,24 @@ export async function PATCH(
     return Response.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const body = await request.json().catch(() => ({}))
-  const name: string = typeof body.name === 'string' && body.name.trim() ? body.name.trim() : project.name
+  const body = await request.json().catch(() => null)
+  if (body === null || typeof body.name !== 'string' || !body.name.trim()) {
+    return Response.json({ error: 'Invalid request body' }, { status: 400 })
+  }
+  const name = body.name.trim()
 
-  const updated = await prisma.project.update({
-    where: { id: projectId },
-    data: { name },
-  })
-
-  return Response.json({ project: updated })
+  try {
+    const updated = await prisma.project.update({
+      where: { id: projectId },
+      data: { name },
+    })
+    return Response.json({ project: updated })
+  } catch (error: any) {
+    if (error.code === 'P2025') {
+      return Response.json({ error: 'Not found' }, { status: 404 })
+    }
+    throw error
+  }
 }
 
 export async function DELETE(
@@ -51,7 +60,13 @@ export async function DELETE(
     return Response.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  await prisma.project.delete({ where: { id: projectId } })
-
-  return new Response(null, { status: 204 })
+  try {
+    await prisma.project.delete({ where: { id: projectId } })
+    return new Response(null, { status: 204 })
+  } catch (error: any) {
+    if (error.code === 'P2025') {
+      return Response.json({ error: 'Not found' }, { status: 404 })
+    }
+    throw error
+  }
 }

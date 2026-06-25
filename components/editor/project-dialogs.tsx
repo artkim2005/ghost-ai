@@ -49,7 +49,7 @@ export function ProjectDialogs({ actions }: ProjectDialogsProps) {
               value={createName}
               onChange={(e) => setCreateName(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && createName.trim()) handleCreate()
+                if (e.key === "Enter" && !e.nativeEvent.isComposing && createName.trim()) handleCreate()
               }}
               autoFocus
             />
@@ -92,7 +92,7 @@ export function ProjectDialogs({ actions }: ProjectDialogsProps) {
             value={renameName}
             onChange={(e) => setRenameName(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && renameName.trim()) handleRename()
+              if (e.key === "Enter" && !e.nativeEvent.isComposing && renameName.trim()) handleRename()
             }}
             autoFocus
           />

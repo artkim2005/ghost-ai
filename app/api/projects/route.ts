@@ -29,9 +29,15 @@ export async function POST(request: Request) {
       ? rawId
       : undefined
 
-  const project = await prisma.project.create({
-    data: { ...(id ? { id } : {}), ownerId: userId, name },
-  })
-
-  return Response.json({ project }, { status: 201 })
+  try {
+    const project = await prisma.project.create({
+      data: { ...(id ? { id } : {}), ownerId: userId, name },
+    })
+    return Response.json({ project }, { status: 201 })
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      return Response.json({ error: 'Project ID already exists' }, { status: 409 })
+    }
+    throw error
+  }
 }

@@ -34,6 +34,7 @@ export interface UseProjectActionsReturn {
   openCreate: () => void
   openRename: (project: Project) => void
   openDelete: (project: Project) => void
+  openProject: (project: Project) => void
   closeDialog: () => void
   setCreateName: (name: string) => void
   setRenameName: (name: string) => void
@@ -73,6 +74,10 @@ export function useProjectActions(): UseProjectActionsReturn {
     setOpenDialog("delete")
   }
 
+  function openProject(project: Project) {
+    router.push(`/editor/${project.id}`)
+  }
+
   function closeDialog() {
     setOpenDialog(null)
     setSelectedProject(null)
@@ -82,7 +87,7 @@ export function useProjectActions(): UseProjectActionsReturn {
     if (!createName.trim() || isLoading) return
     setIsLoading(true)
     try {
-      const id = roomIdPreview || randomSuffix()
+      const id = roomIdPreview || `untitled-${randomSuffix()}`
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -92,6 +97,8 @@ export function useProjectActions(): UseProjectActionsReturn {
       const { project } = await res.json()
       closeDialog()
       router.push(`/editor/${project.id}`)
+    } catch (error) {
+      console.error("Failed to create project:", error)
     } finally {
       setIsLoading(false)
     }
@@ -109,6 +116,8 @@ export function useProjectActions(): UseProjectActionsReturn {
       if (!res.ok) throw new Error("Failed to rename project")
       closeDialog()
       router.refresh()
+    } catch (error) {
+      console.error("Failed to rename project:", error)
     } finally {
       setIsLoading(false)
     }
@@ -129,6 +138,8 @@ export function useProjectActions(): UseProjectActionsReturn {
       } else {
         router.refresh()
       }
+    } catch (error) {
+      console.error("Failed to delete project:", error)
     } finally {
       setIsLoading(false)
     }
@@ -144,6 +155,7 @@ export function useProjectActions(): UseProjectActionsReturn {
     openCreate,
     openRename,
     openDelete,
+    openProject,
     closeDialog,
     setCreateName,
     setRenameName,

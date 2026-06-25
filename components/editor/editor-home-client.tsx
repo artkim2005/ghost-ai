@@ -29,6 +29,7 @@ export function EditorHomeClient({ myProjects, sharedProjects }: EditorHomeClien
         onOpenCreate={actions.openCreate}
         onOpenRename={actions.openRename}
         onOpenDelete={actions.openDelete}
+        onOpenProject={actions.openProject}
       />
       <main className="flex flex-1 items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
