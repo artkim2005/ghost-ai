@@ -11,35 +11,27 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import type { UseProjectDialogsReturn } from "@/hooks/use-project-dialogs"
-
-function toSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-+|-+$/g, "")
-}
+import type { UseProjectActionsReturn } from "@/hooks/use-project-actions"
 
 interface ProjectDialogsProps {
-  dialogs: UseProjectDialogsReturn
+  actions: UseProjectActionsReturn
 }
 
-export function ProjectDialogs({ dialogs }: ProjectDialogsProps) {
+export function ProjectDialogs({ actions }: ProjectDialogsProps) {
   const {
     openDialog,
     selectedProject,
     createName,
+    roomIdPreview,
     renameName,
     isLoading,
     closeDialog,
     setCreateName,
     setRenameName,
-  } = dialogs
-
-  const slug = toSlug(createName)
+    handleCreate,
+    handleRename,
+    handleDelete,
+  } = actions
 
   return (
     <>
@@ -57,14 +49,14 @@ export function ProjectDialogs({ dialogs }: ProjectDialogsProps) {
               value={createName}
               onChange={(e) => setCreateName(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && createName.trim()) closeDialog()
+                if (e.key === "Enter" && createName.trim()) handleCreate()
               }}
               autoFocus
             />
-            {createName && (
+            {roomIdPreview && (
               <p className="text-xs text-copy-muted">
-                Slug:{" "}
-                <span className="font-mono text-copy-secondary">{slug}</span>
+                Room ID:{" "}
+                <span className="font-mono text-copy-secondary">{roomIdPreview}</span>
               </p>
             )}
           </div>
@@ -72,14 +64,11 @@ export function ProjectDialogs({ dialogs }: ProjectDialogsProps) {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button 
+            <Button
               disabled={!createName.trim() || isLoading}
-              onClick={() => {
-                // TODO: Call API to create project
-                closeDialog()
-              }}
+              onClick={handleCreate}
             >
-              Create
+              {isLoading ? "Creating…" : "Create"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -103,7 +92,7 @@ export function ProjectDialogs({ dialogs }: ProjectDialogsProps) {
             value={renameName}
             onChange={(e) => setRenameName(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && renameName.trim()) closeDialog()
+              if (e.key === "Enter" && renameName.trim()) handleRename()
             }}
             autoFocus
           />
@@ -111,8 +100,11 @@ export function ProjectDialogs({ dialogs }: ProjectDialogsProps) {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button disabled={!renameName.trim() || isLoading}>
-              Rename
+            <Button
+              disabled={!renameName.trim() || isLoading}
+              onClick={handleRename}
+            >
+              {isLoading ? "Renaming…" : "Rename"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -136,15 +128,12 @@ export function ProjectDialogs({ dialogs }: ProjectDialogsProps) {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button 
-               variant="destructive" 
-               disabled={isLoading}
-               onClick={() => {
-                 // TODO: Call API to delete project
-                 closeDialog()
-               }}
-             >
-              Delete
+            <Button
+              variant="destructive"
+              disabled={isLoading}
+              onClick={handleDelete}
+            >
+              {isLoading ? "Deleting…" : "Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>

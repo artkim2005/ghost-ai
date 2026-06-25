@@ -3,7 +3,7 @@
 Update this file whenever the current phase, active feature, or implementation state changes.
 
 ## Current Phase
-- Feature 05 complete. Next feature TBD.
+- Feature 07 complete.
 
 ## Current Goal
 - Awaiting next feature spec.
@@ -15,6 +15,8 @@ Update this file whenever the current phase, active feature, or implementation s
 - Feature 03: Auth — @clerk/ui installed; Clerk env vars added (SIGN_IN_URL, SIGN_UP_URL, AFTER_SIGN_IN_URL, AFTER_SIGN_UP_URL); proxy.ts at project root wraps clerkMiddleware with createRouteMatcher to protect all routes except /sign-in and /sign-up; ClerkProvider wraps root layout using dark theme from @clerk/ui/themes with CSS variable overrides (no hardcoded colors); sign-in and sign-up pages use two-panel layout (info panel left on lg+, Clerk form right); app/page.tsx redirects authenticated users to /editor and unauthenticated users to /sign-in; UserButton added to EditorNavbar right section; minimal app/editor/page.tsx shell created with EditorNavbar and ProjectSidebar.
 - Feature 04: Project Dialogues — /editor home screen with heading, description, and New Project button; useProjectDialogs hook managing dialog/form/loading state; Create/Rename/Delete dialogs in components/editor/project-dialogs.tsx; sidebar updated with project item list, hover-reveal rename/delete actions (owned projects only), mobile backdrop scrim, New Project button wired to Create dialog; mock project data in lib/mock-projects.ts; no API calls or persistence.
 - Feature 05: Prisma — Project and ProjectCollaborator models in prisma/models/project.prisma (ProjectStatus enum DRAFT/ARCHIVED, cascade delete, unique project/email constraint, indexes on ownerId, createdAt, email, projectId/createdAt); lib/prisma.ts cached singleton branching on DATABASE_URL (prisma+postgres:// → accelerateUrl, postgres:// → @prisma/adapter-pg); migration 20260616200841_init applied; client generated to app/generated/prisma/.
+- Feature 06: Project APIs — REST endpoints in app/api/projects/route.ts (GET lists owner's projects ordered by createdAt desc; POST creates project with default name "Untitled Project") and app/api/projects/[projectId]/route.ts (PATCH renames, DELETE deletes); 401 for unauthenticated, 403 for non-owner mutations; uses Clerk auth() and Prisma; no UI wiring.
+- Feature 07: Wire Editor Home — editor/page.tsx converted to RSC; fetches owned projects (by userId) and shared projects (by email via ProjectCollaborator) server-side using lib/projects.ts helpers; EditorHomeClient client shell holds sidebar toggle state; useProjectActions hook manages all dialog state + API calls (create with client-generated room ID slug-suffix, rename with refresh, delete with redirect-or-refresh); project-sidebar and project-dialogs updated to use real SidebarProject type and wire handleCreate/handleRename/handleDelete; POST /api/projects accepts optional client-provided id for room ID alignment; mock-projects.ts and use-project-dialogs.ts removed.
 
 ## In Progress
 
