@@ -10,9 +10,11 @@ interface ProjectSidebarProps {
   onClose: () => void
   myProjects: SidebarProject[]
   sharedProjects: SidebarProject[]
+  activeProjectId?: string
   onOpenCreate: () => void
   onOpenRename: (project: SidebarProject) => void
   onOpenDelete: (project: SidebarProject) => void
+  onOpenProject: (project: SidebarProject) => void
 }
 
 export function ProjectSidebar({
@@ -20,9 +22,11 @@ export function ProjectSidebar({
   onClose,
   myProjects,
   sharedProjects,
+  activeProjectId,
   onOpenCreate,
   onOpenRename,
   onOpenDelete,
+  onOpenProject,
 }: ProjectSidebarProps) {
   return (
     <>
@@ -71,7 +75,12 @@ export function ProjectSidebar({
                   {myProjects.map((project) => (
                     <li
                       key={project.id}
-                      className="group flex items-center gap-2 rounded-xl px-2 py-1.5 hover:bg-elevated"
+                      className={`group flex items-center gap-2 rounded-xl px-2 py-1.5 cursor-pointer ${
+                        project.id === activeProjectId
+                          ? "bg-elevated"
+                          : "hover:bg-elevated"
+                      }`}
+                      onClick={() => onOpenProject(project)}
                     >
                       <span className="flex-1 truncate text-sm text-copy-primary">
                         {project.name}
@@ -81,7 +90,10 @@ export function ProjectSidebar({
                           variant="ghost"
                           size="icon-xs"
                           className="text-copy-muted hover:text-copy-primary"
-                          onClick={() => onOpenRename(project)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onOpenRename(project)
+                          }}
                         >
                           <Pencil className="h-3 w-3" />
                           <span className="sr-only">Rename</span>
@@ -90,7 +102,10 @@ export function ProjectSidebar({
                           variant="ghost"
                           size="icon-xs"
                           className="text-copy-muted hover:text-error"
-                          onClick={() => onOpenDelete(project)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onOpenDelete(project)
+                          }}
                         >
                           <Trash2 className="h-3 w-3" />
                           <span className="sr-only">Delete</span>
@@ -112,7 +127,12 @@ export function ProjectSidebar({
                   {sharedProjects.map((project) => (
                     <li
                       key={project.id}
-                      className="flex items-center rounded-xl px-2 py-1.5 hover:bg-elevated"
+                      className={`flex items-center rounded-xl px-2 py-1.5 cursor-pointer ${
+                        project.id === activeProjectId
+                          ? "bg-elevated"
+                          : "hover:bg-elevated"
+                      }`}
+                      onClick={() => onOpenProject(project)}
                     >
                       <span className="flex-1 truncate text-sm text-copy-primary">
                         {project.name}
