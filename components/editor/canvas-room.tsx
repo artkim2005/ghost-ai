@@ -8,6 +8,7 @@ import {
 } from "@liveblocks/react"
 import { CanvasFlow } from "./canvas-flow"
 import type { CanvasTemplate } from "./starter-templates"
+import type { SaveStatus } from "@/hooks/use-autosave"
 
 interface ErrorBoundaryProps {
   fallback: ReactNode
@@ -35,14 +36,16 @@ interface CanvasRoomProps {
   roomId: string
   pendingTemplate?: CanvasTemplate | null
   onTemplateApplied?: () => void
+  onSaveStatusChange?: (status: SaveStatus) => void
+  onSaveReady?: (save: () => void) => void
 }
 
-export function CanvasRoom({ roomId, pendingTemplate, onTemplateApplied }: CanvasRoomProps) {
+export function CanvasRoom({ roomId, pendingTemplate, onTemplateApplied, onSaveStatusChange, onSaveReady }: CanvasRoomProps) {
   return (
     <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
       <RoomProvider
         id={roomId}
-        initialPresence={{ cursor: null, isThinking: false }}
+        initialPresence={{ cursor: null, thinking: false }}
       >
         <CanvasErrorBoundary
           fallback={
@@ -63,6 +66,9 @@ export function CanvasRoom({ roomId, pendingTemplate, onTemplateApplied }: Canva
             <CanvasFlow
               pendingTemplate={pendingTemplate}
               onTemplateApplied={onTemplateApplied}
+              projectId={roomId}
+              onSaveStatusChange={onSaveStatusChange}
+              onSaveReady={onSaveReady}
             />
           </ClientSideSuspense>
         </CanvasErrorBoundary>

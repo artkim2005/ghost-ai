@@ -1,17 +1,18 @@
 "use client"
 
-import { useState } from "react"
-import { PanelLeftOpen, PanelLeftClose, Share2, Sparkles, X, LayoutTemplate } from "lucide-react"
-import { UserButton } from "@clerk/nextjs"
+import { useState, useCallback, useRef } from "react"
+import { PanelLeftOpen, PanelLeftClose, Share2, Sparkles, LayoutTemplate } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ProjectSidebar } from "@/components/editor/project-sidebar"
 import { ProjectDialogs } from "@/components/editor/project-dialogs"
 import { ShareDialog } from "@/components/editor/share-dialog"
 import { StarterTemplatesModal } from "@/components/editor/starter-templates-modal"
+import { AiSidebar } from "@/components/editor/ai-sidebar"
 import { useProjectActions } from "@/hooks/use-project-actions"
 import { CanvasRoom } from "@/components/editor/canvas-room"
 import type { SidebarProject } from "@/lib/projects"
 import type { CanvasTemplate } from "@/components/editor/starter-templates"
+import type { SaveStatus } from "@/hooks/use-autosave"
 
 interface EditorWorkspaceClientProps {
   project: { id: string; name: string; isOwner: boolean }
@@ -29,6 +30,10 @@ export function EditorWorkspaceClient({
   const [shareOpen, setShareOpen] = useState(false)
   const [templatesOpen, setTemplatesOpen] = useState(false)
   const [pendingTemplate, setPendingTemplate] = useState<CanvasTemplate | null>(null)
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle")
+  const handleSaveStatusChange = useCallback((s: SaveStatus) => setSaveStatus(s), [])
+  const saveRef = useRef<(() => void) | null>(null)
+  const handleSaveReady = useCallback((fn: () => void) => { saveRef.current = fn }, [])
   const actions = useProjectActions()
 
   return (
@@ -49,6 +54,21 @@ export function EditorWorkspaceClient({
           </Button>
         </div>
         <span className="text-sm font-medium text-copy-primary">{project.name}</span>
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={saveStatus === "saving"}
+          onClick={() => saveRef.current?.()}
+          className="text-xs text-copy-muted hover:text-copy-primary"
+        >
+          {saveStatus === "saving"
+            ? "Saving..."
+            : saveStatus === "saved"
+            ? "Saved"
+            : saveStatus === "error"
+            ? "Error"
+            : "Save"}
+        </Button>
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"
@@ -81,7 +101,6 @@ export function EditorWorkspaceClient({
             <Sparkles className="h-5 w-5" />
             <span className="sr-only">AI Assistant</span>
           </Button>
-          <UserButton />
         </div>
       </header>
 
@@ -90,6 +109,8 @@ export function EditorWorkspaceClient({
           roomId={project.id}
           pendingTemplate={pendingTemplate}
           onTemplateApplied={() => setPendingTemplate(null)}
+          onSaveStatusChange={handleSaveStatusChange}
+          onSaveReady={handleSaveReady}
         />
       </main>
 
@@ -105,26 +126,7 @@ export function EditorWorkspaceClient({
         onOpenProject={actions.openProject}
       />
 
-      <aside
-        className={`fixed right-0 top-12 z-30 flex h-[calc(100vh-3rem)] w-80 flex-col border-l border-surface-border bg-surface transition-transform duration-200 ease-in-out ${
-          aiSidebarOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="flex items-center justify-between border-b border-surface-border px-4 py-3">
-          <span className="text-sm font-medium text-copy-primary">AI Assistant</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setAiSidebarOpen(false)}
-            className="h-7 w-7 text-copy-muted hover:text-copy-primary"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-        <div className="flex flex-1 items-center justify-center">
-          <p className="text-sm text-copy-faint">AI chat coming soon</p>
-        </div>
-      </aside>
+      <AiSidebar isOpen={aiSidebarOpen} onClose={() => setAiSidebarOpen(false)} />
 
       <ShareDialog
         open={shareOpen}
