@@ -1,26 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { EditorNavbar } from "@/components/editor/editor-navbar"
-import { ProjectSidebar } from "@/components/editor/project-sidebar"
-import { ProjectDialogs } from "@/components/editor/project-dialogs"
-import { useProjectActions } from "@/hooks/use-project-actions"
-import type { SidebarProject } from "@/lib/projects"
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { EditorNavbar } from "@/components/editor/editor-navbar";
+import { ProjectSidebar } from "@/components/editor/project-sidebar";
+import { ProjectDialogs } from "@/components/editor/project-dialogs";
+import { useProjectActions } from "@/hooks/use-project-actions";
+import type { SidebarProject } from "@/lib/projects";
 
 interface EditorHomeClientProps {
-  myProjects: SidebarProject[]
-  sharedProjects: SidebarProject[]
+  myProjects: SidebarProject[];
+  sharedProjects: SidebarProject[];
 }
 
-export function EditorHomeClient({ myProjects, sharedProjects }: EditorHomeClientProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const actions = useProjectActions()
+export function EditorHomeClient({
+  myProjects,
+  sharedProjects,
+}: EditorHomeClientProps) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const actions = useProjectActions();
 
   return (
     <div className="relative flex h-screen flex-col overflow-hidden bg-base">
-      <EditorNavbar isOpen={sidebarOpen} onToggle={() => setSidebarOpen((o) => !o)} />
+      <EditorNavbar
+        isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen((o) => !o)}
+      />
       <ProjectSidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -37,11 +43,12 @@ export function EditorHomeClient({ myProjects, sharedProjects }: EditorHomeClien
             Create a project or open an existing one
           </h1>
           <p className="max-w-sm text-sm text-copy-muted">
-            Start a new architecture workspace, or choose a project from the sidebar.
+            Start a new architecture workspace, or choose a project from the
+            sidebar.
           </p>
           <Button
             onClick={actions.openCreate}
-            className="gap-2 bg-brand text-base hover:bg-brand/90"
+            className="gap-2 bg-foreground text-base hover:bg-neutral-300"
           >
             <Plus className="h-4 w-4" />
             New Project
@@ -50,5 +57,5 @@ export function EditorHomeClient({ myProjects, sharedProjects }: EditorHomeClien
       </main>
       <ProjectDialogs actions={actions} />
     </div>
-  )
+  );
 }

@@ -1,11 +1,16 @@
+import { LiveList } from "@liveblocks/client";
+import type { ChatMessage } from "@/types/tasks";
+
 declare global {
   interface Liveblocks {
     Presence: {
       cursor: { x: number; y: number } | null;
-      isThinking: boolean;
+      thinking: boolean;
     };
 
-    Storage: {};
+    Storage: {
+      aiChat: LiveList<ChatMessage>;
+    };
 
     UserMeta: {
       id: string;
@@ -16,7 +21,11 @@ declare global {
       };
     };
 
-    RoomEvent: {};
+    RoomEvent: {
+      type: "AI_STATUS";
+      status: "thinking" | "processing" | "complete" | "error";
+      message: string;
+    };
 
     ThreadMetadata: {};
 

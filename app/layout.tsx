@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Momo_Trust_Display } from "next/font/google";
+import localFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/ui/themes";
 import "./globals.css";
@@ -14,8 +15,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const momoTrustDisplay = localFont({
+  src: "./fonts/MomoTrustDisplay-Regular.ttf",
+  variable: "--font-momo-trust-display",
+  weight: "400",
+  adjustFontFallback: false,
+});
+
 export const metadata: Metadata = {
-  title: "Ghost AI",
+  title: "Saturn",
   description: "Real-time collaborative system design workspace",
 };
 
@@ -41,7 +49,7 @@ export default function RootLayout({
         theme: dark,
         variables: {
           colorBackground: "var(--bg-surface)",
-          colorPrimary: "var(--accent-primary)",
+          colorPrimary: "var(--foreground)",
           colorPrimaryForeground: "var(--bg-base)",
           colorForeground: "var(--text-primary)",
           colorMutedForeground: "var(--text-secondary)",
@@ -57,7 +65,7 @@ export default function RootLayout({
     >
       <html
         lang="en"
-        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${momoTrustDisplay.variable} h-full antialiased`}
       >
         <body className="min-h-full flex flex-col">{children}</body>
       </html>

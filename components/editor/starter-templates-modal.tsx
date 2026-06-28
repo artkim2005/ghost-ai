@@ -195,8 +195,7 @@ export function StarterTemplatesModal({ open, onClose, onImport }: StarterTempla
         <DialogHeader>
           <DialogTitle className="text-xl">Import Template</DialogTitle>
           <DialogDescription>
-            Choose a starter template to pre-populate your canvas. Any existing nodes will be
-            replaced — use{" "}
+            Choose a starter template to add to your canvas at your current view. Use{" "}
             <kbd className="rounded border border-surface-border bg-subtle px-1 py-0.5 font-mono text-xs text-copy-primary">
               Cmd/Ctrl+Z
             </kbd>{" "}
@@ -212,13 +211,13 @@ export function StarterTemplatesModal({ open, onClose, onImport }: StarterTempla
               <div className="h-64 bg-base p-3">
                 <TemplatePreview template={template} />
               </div>
-              <div className="flex flex-col gap-2 p-4">
+              <div className="flex flex-col gap-2 p-4 flex-1">
                 <span className="font-semibold text-copy-primary">{template.name}</span>
                 <p className="text-sm text-copy-muted leading-relaxed">{template.description}</p>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="mt-2 w-full gap-2"
+                  className="mt-auto w-full gap-2"
                   onClick={() => handleImport(template)}
                 >
                   <Download className="h-4 w-4" />

@@ -48,6 +48,7 @@
   --color-brand-dim: var(--accent-primary-dim);
   --color-ai: var(--accent-ai);
   --color-ai-text: var(--accent-ai-text);
+  --color-accent-green: var(--accent-green);
 
   /* Ghost AI state tokens */
   --color-error: var(--state-error);
@@ -67,7 +68,7 @@
     --card-foreground: #f0f0f4;
     --popover: #18181c;
     --popover-foreground: #f0f0f4;
-    --primary: #00c8d4;
+    --primary: #f0f0f4;
     --primary-foreground: #080809;
     --secondary: #1e1e23;
     --secondary-foreground: #f0f0f4;
@@ -78,7 +79,7 @@
     --destructive: #ff4d4f;
     --border: #2a2a30;
     --input: #2a2a30;
-    --ring: #00c8d4;
+    --ring: #f0f0f4;
 
     /* Ghost AI design tokens */
     --bg-base: #080809;
@@ -91,10 +92,11 @@
     --text-secondary: #c0c0cc;
     --text-muted: #808090;
     --text-faint: #505060;
-    --accent-primary: #00c8d4;
+    --accent-primary: #f0f0f4;
     --accent-primary-dim: rgba(0, 200, 212, 0.12);
     --accent-ai: #6457f9;
     --accent-ai-text: #8b82ff;
+    --accent-green: #62c073;
     --state-error: #ff4d4f;
     --state-success: #34d399;
     --state-warning: #fbbf24;

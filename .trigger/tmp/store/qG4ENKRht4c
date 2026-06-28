@@ -1,0 +1,142 @@
+import {
+  external_exports,
+  generateText,
+  openrouter
+} from "../../../chunk-5SJA3HGE.mjs";
+import "../../../chunk-GL53E3WX.mjs";
+import {
+  logger,
+  metadata,
+  schemaTask
+} from "../../../chunk-2BXDD6X4.mjs";
+import "../../../chunk-WZGQJWAS.mjs";
+import {
+  __name,
+  init_esm
+} from "../../../chunk-FUV6SSYK.mjs";
+
+// trigger/generate-spec.ts
+init_esm();
+var nodeSchema = external_exports.object({
+  id: external_exports.string(),
+  type: external_exports.string().optional(),
+  position: external_exports.object({ x: external_exports.number(), y: external_exports.number() }),
+  data: external_exports.object({
+    label: external_exports.string(),
+    color: external_exports.string().optional(),
+    shape: external_exports.string().optional()
+  }),
+  width: external_exports.number().optional(),
+  height: external_exports.number().optional()
+});
+var edgeSchema = external_exports.object({
+  id: external_exports.string(),
+  source: external_exports.string(),
+  target: external_exports.string(),
+  data: external_exports.object({ label: external_exports.string().optional() }).optional()
+});
+var chatMessageSchema = external_exports.object({
+  id: external_exports.string(),
+  sender: external_exports.string(),
+  role: external_exports.enum(["user", "assistant"]),
+  content: external_exports.string(),
+  timestamp: external_exports.string(),
+  source: external_exports.enum(["architect", "chat"]).optional()
+});
+var inputSchema = external_exports.object({
+  projectId: external_exports.string().min(1),
+  roomId: external_exports.string().min(1),
+  chatHistory: external_exports.array(chatMessageSchema).default([]),
+  nodes: external_exports.array(nodeSchema).default([]),
+  edges: external_exports.array(edgeSchema).default([])
+});
+function buildCanvasDescription(nodes, edges) {
+  const nodeLines = nodes.map(
+    (n) => `- ${n.id} [${n.data.shape ?? "rectangle"}]: "${n.data.label}"` + (n.data.color ? ` (color: ${n.data.color})` : "")
+  );
+  const nodeMap = new Map(nodes.map((n) => [n.id, n.data.label]));
+  const edgeLines = edges.map((e) => {
+    const sourceLabel = nodeMap.get(e.source) ?? e.source;
+    const targetLabel = nodeMap.get(e.target) ?? e.target;
+    const label = e.data?.label ? ` [${e.data.label}]` : "";
+    return `- ${sourceLabel} → ${targetLabel}${label}`;
+  });
+  const parts = [];
+  if (nodeLines.length > 0) {
+    parts.push("## Components\n" + nodeLines.join("\n"));
+  }
+  if (edgeLines.length > 0) {
+    parts.push("## Connections\n" + edgeLines.join("\n"));
+  }
+  return parts.join("\n\n");
+}
+__name(buildCanvasDescription, "buildCanvasDescription");
+function buildChatSummary(chatHistory) {
+  const architectMessages = chatHistory.filter(
+    (m) => !m.source || m.source === "architect"
+  );
+  if (architectMessages.length === 0) return "";
+  const lines = architectMessages.map(
+    (m) => `${m.role === "user" ? "User" : "AI"}: ${m.content}`
+  );
+  return "## Design Conversation\n" + lines.join("\n");
+}
+__name(buildChatSummary, "buildChatSummary");
+var SYSTEM_PROMPT = `You are Ghost AI, a senior software architect. Generate a thorough technical specification document in Markdown for the system architecture shown in the canvas.
+
+The specification should include:
+1. **System Overview** — purpose, high-level summary, and key design goals
+2. **Architecture Components** — description of each component, its role, and responsibilities
+3. **Data Flow** — how data moves between components, including key interactions
+4. **API Contracts** — notable interfaces or communication patterns between services
+5. **Technology Considerations** — relevant tech stack choices, protocols, or constraints implied by the design
+6. **Scalability & Reliability** — potential bottlenecks, failure modes, and mitigation strategies
+7. **Security Considerations** — authentication, authorization, and data protection concerns
+
+Write in clear technical prose. Use headers, bullet points, and code blocks where appropriate. Output plain Markdown only — no preamble or explanation outside the document itself.`;
+var generateSpec = schemaTask({
+  id: "generate-spec",
+  schema: inputSchema,
+  retry: {
+    maxAttempts: 3,
+    factor: 2,
+    minTimeoutInMs: 1e3,
+    maxTimeoutInMs: 1e4,
+    randomize: true
+  },
+  run: /* @__PURE__ */ __name(async (payload) => {
+    logger.info("generate-spec started", {
+      projectId: payload.projectId,
+      roomId: payload.roomId,
+      nodeCount: payload.nodes.length,
+      edgeCount: payload.edges.length
+    });
+    metadata.set("status", "generating").set("progress", 0);
+    const canvasDescription = buildCanvasDescription(
+      payload.nodes,
+      payload.edges
+    );
+    const chatSummary = buildChatSummary(payload.chatHistory);
+    const userPrompt = [
+      "Generate a technical specification for the following system architecture.",
+      "",
+      canvasDescription,
+      chatSummary ? "\n" + chatSummary : ""
+    ].filter(Boolean).join("\n");
+    metadata.set("progress", 25).set("status", "calling_ai");
+    logger.info("Calling Gemini for spec generation");
+    const { text } = await generateText({
+      model: openrouter("gnvidia/nemotron-3-ultra-550b-a55b:free"),
+      system: SYSTEM_PROMPT,
+      prompt: userPrompt
+    });
+    metadata.set("progress", 90).set("status", "finalizing");
+    logger.info("generate-spec complete", { specLength: text.length });
+    metadata.set("progress", 100).set("status", "complete");
+    return { spec: text };
+  }, "run")
+});
+export {
+  generateSpec
+};
+//# sourceMappingURL=generate-spec.mjs.map

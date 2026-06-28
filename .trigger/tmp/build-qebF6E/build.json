@@ -1,0 +1,134 @@
+{
+  "build": {
+  },
+  "cliPackageVersion": "4.4.6",
+  "config": {
+    "dirs": [
+      "./trigger"
+    ],
+    "project": "proj_olulxsoizajaexyscdgu"
+  },
+  "configPath": "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-qebF6E/Documents/ghost-ai/trigger.config.mjs",
+  "contentHash": "fa42e10bf205e85c957502888ab739bb",
+  "customConditions": [
+  ],
+  "deploy": {
+    "env": {
+    }
+  },
+  "environment": "dev",
+  "externals": [
+    {
+      "name": "import-in-the-middle",
+      "version": "1.11.0"
+    }
+  ],
+  "files": [
+    {
+      "entry": "trigger/design-agent.ts",
+      "out": "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-qebF6E/Documents/ghost-ai/trigger/design-agent.mjs"
+    },
+    {
+      "entry": "trigger/generate-spec.ts",
+      "out": "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-qebF6E/Documents/ghost-ai/trigger/generate-spec.mjs"
+    }
+  ],
+  "indexWorkerEntryPoint": "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-qebF6E/.npm/_npx/f51a09bd0abf5f10/node_modules/trigger.dev/dist/esm/entryPoints/dev-index-worker.mjs",
+  "otelImportHook": {
+    "include": [
+    ]
+  },
+  "outputHashes": {
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/.npm/_npx/f51a09bd0abf5f10/node_modules/trigger.dev/dist/esm/entryPoints/dev-index-worker.mjs": "1QAbxcFRwZo",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/.npm/_npx/f51a09bd0abf5f10/node_modules/trigger.dev/dist/esm/entryPoints/dev-index-worker.mjs.map": "aaOO2Dudsxw",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/.npm/_npx/f51a09bd0abf5f10/node_modules/trigger.dev/dist/esm/entryPoints/dev-run-worker.mjs": "fOsR34IZ0rQ",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/.npm/_npx/f51a09bd0abf5f10/node_modules/trigger.dev/dist/esm/entryPoints/dev-run-worker.mjs.map": "T+qko51PeLo",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/Documents/ghost-ai/trigger.config.mjs": "TaJkytthXqM",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/Documents/ghost-ai/trigger.config.mjs.map": "U4u8v3M7h34",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/Documents/ghost-ai/trigger/design-agent.mjs": "H1eleQrewbc",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/Documents/ghost-ai/trigger/design-agent.mjs.map": "2aCF7Drd8VE",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/Documents/ghost-ai/trigger/generate-spec.mjs": "hK//DSskjWY",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/Documents/ghost-ai/trigger/generate-spec.mjs.map": "bUvaicgEVqU",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-2BXDD6X4.mjs": "Vpz/EzTD3dc",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-2BXDD6X4.mjs.map": "TMkpugLeDw0",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-4YGD2HO4.mjs": "gbp6SdEd7wM",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-4YGD2HO4.mjs.map": "faiQWmKT+eE",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-5AMOZM54.mjs": "zXMgeGGg488",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-5AMOZM54.mjs.map": "oRLLG+4nZd8",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-5SJA3HGE.mjs": "iqrHJV/wqS8",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-5SJA3HGE.mjs.map": "rjebsVSF3gU",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-6L3DBTMP.mjs": "pnVzG1Cs3O8",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-6L3DBTMP.mjs.map": "JZmVvNwm4gI",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-CTDAWCTK.mjs": "pjmNPzgoVKg",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-CTDAWCTK.mjs.map": "922Py0nEmuE",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-FUV6SSYK.mjs": "Mad/q9MtDLc",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-FUV6SSYK.mjs.map": "9IFojZihDyA",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-GL53E3WX.mjs": "9h+ZBYosWsE",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-GL53E3WX.mjs.map": "tuOLJO1zLK4",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-WZGQJWAS.mjs": "Y9pY3LOEHVY",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-WZGQJWAS.mjs.map": "LMPzUuAiOIM",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-YWPWLCTP.mjs": "ABVt9Vl1wiA",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/chunk-YWPWLCTP.mjs.map": "9Pwea9eleHQ",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/crypto.node-5HPPZ5PO.mjs": "Hosiis4RK5g",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/crypto.node-5HPPZ5PO.mjs.map": "f+DirqJ/vQY",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/crypto.node-OZIG7C7V.mjs": "xL7AWEo5LhA",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/crypto.node-OZIG7C7V.mjs.map": "0b4tlwmkM3g",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/esm-HF64XN43.mjs": "/ASyNSMg03k",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/esm-HF64XN43.mjs.map": "CYqZQcavdAI",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/esm-UJZXZXFH.mjs": "vyj8FKrApaI",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/esm-UJZXZXFH.mjs.map": "VON93E1In1A",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/getMachineId-bsd-CQRW3DPG.mjs": "244piLhuSIA",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/getMachineId-bsd-CQRW3DPG.mjs.map": "dIKKZ8MMNl8",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/getMachineId-darwin-VNZGFVBR.mjs": "960+ecDyqc0",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/getMachineId-darwin-VNZGFVBR.mjs.map": "xJrfS7fTZLk",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/getMachineId-linux-TYVV4ZLT.mjs": "Mu4BzqEE9PY",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/getMachineId-linux-TYVV4ZLT.mjs.map": "iGLn8Cz4sPg",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/getMachineId-unsupported-5IRX77GI.mjs": "Ca/HGT5QNLM",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/getMachineId-unsupported-5IRX77GI.mjs.map": "L7KXQNW7Eqw",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/getMachineId-win-KAUWWGCN.mjs": "9b/UQB1v9SE",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/getMachineId-win-KAUWWGCN.mjs.map": "O6wx6Q5hFOU",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/lib-U7HCZIK3.mjs": "5ywZkXI9YgY",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/lib-U7HCZIK3.mjs.map": "hxUUgf/hnII",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/query_compiler_fast_bg.postgresql-QMWVX7FC.mjs": "8bTOcbcbOic",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/query_compiler_fast_bg.postgresql-QMWVX7FC.mjs.map": "O+haTGBnK5U",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/query_compiler_fast_bg.postgresql.wasm-base64-A6F5D2GC.mjs": "UHNwQfXtuhs",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/query_compiler_fast_bg.postgresql.wasm-base64-A6F5D2GC.mjs.map": "OVn+cQqsbqY",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/s2s-3ZRIPYYD.mjs": "+6xdP4AKcy8",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/s2s-3ZRIPYYD.mjs.map": "cMXIJWjI/3w",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/token-GSZOBFWR.mjs": "kKYQj+1T5dU",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/token-GSZOBFWR.mjs.map": "Ork2QtNy8Ls",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/token-M63VABLC.mjs": "/AqQN0+hRMU",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/token-M63VABLC.mjs.map": "SXQYe2vyA2o",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/token-util-5YHFLCIE.mjs": "dTrzkIwjk3k",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/token-util-5YHFLCIE.mjs.map": "0b4tlwmkM3g",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/token-util-NWOFMPXW.mjs": "1UGLQaS8R9s",
+    "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/token-util-NWOFMPXW.mjs.map": "0b4tlwmkM3g"
+  },
+  "outputPath": "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-qebF6E",
+  "packageVersion": "4.4.6",
+  "runWorkerEntryPoint": "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-qebF6E/.npm/_npx/f51a09bd0abf5f10/node_modules/trigger.dev/dist/esm/entryPoints/dev-run-worker.mjs",
+  "runtime": "node",
+  "sources": {
+    "package.json": {
+      "contentHash": "086771b29667696a275abfb4356d5ac3",
+      "contents": "eJyNVcty4yAQvPsrKB9yCiOh+JHklMN+R6owTGTWGFSAFadS+fctEJKI197sTZpuRkz3zOhzQcjS8CMun8my3VsfKFfL+xjt0XllTQRqYFAP0c6pnodID+6EKeSFU13wy2fyuSCEkKXEPp4yeA4kPt8P4d1JaRmBzil/5KRFg44HJHd3JHEHQmZ31gdlfOBaXzkzsnzgLkwfG94ypJVJCPr0lKPBqbZF9zzesTuTHAKJ/YvmAf23W88HOm0//nkmERaEfI1K+SOfVfFij+l9RCamxA6NRCMUFiq+cEW9PFStta1O/rw+QJ19iLjQ6A5VLPy3T/AW1tBcwCeVIAZsA2zCtOpxp604+EpohYNQrw/QlPkLkrESf6A45OKnNIlD37R9/y9ivvsFzXZonD0FdNWgEO2c7ZVEl9gNsJI9aF1xybuAjnZtVurxb06hxFUczwFNHAnKhUA99OFoy6yt41Kd6UnlIqTi2rajCcA2t4heOKs15Q55ZjfAbqb12oaJtr7FCnzn50+vJlrRvpm5t/YwUFewgs1VppeHK4wenUBd7bTdZQPWhXbnj2h30R0sVjXLxQePN1BDw6bmFZp7T3vuFDcCKT+FvXUqpPF7rWE7nxfan0ff56i0AU0/fG8Lq3kq9EkoibS4DrDC6jhMMcw20MDTtIoG+x6hYTN1VDpnKWqekrMnaGD1LUylPf4NBa70uzKSHtG1Y09t5owjLryn3Kjj2HgMatiWe6T/dX2VFAmquFiFz17PPn90WMx5U18gswbldA1YoebTNWgsuoDzUo7BixgV1ryplt6wYlyqFzNaFPi9sJDbYwVNKXi8XPptJXCdNFx8Lf4AhLbp5g=="
+    },
+    "trigger.config.ts": {
+      "contentHash": "618e98bdea58f333de98ae3e20166d4e",
+      "contents": "eJxljkFLxDAQhe/5FWNPCqWtFjxkL8puXSqIUnoTWWIzKdE2Kcm0LCz975JuVxBPM3xv3ryn+8E6ghNIVNrg1hqlW5hBOdtD9EBOty26ROKUevmdTnm0YQyPi0miEmNHf6zXJwYwOPuFDfGwNOh9gmZK6qrc74vq8Fa9Phfb+lAVT1cxA5DaeQ7vUZKuYdFHwL047kYnSFvDIb/PsgAdktPoOYQUADTis0NZmh1OHJToPMaLsDa73C3fHomwH8hzyOML1abWPdqRSvPiOdxm55jV8U/7FZVoyDoOd2cwhzHHbL7ZsB8SX2WD"
+    },
+    "trigger/design-agent.ts": {
+      "contentHash": "d455b4bd14481a9d69d64654be13962b",
+      "contents": "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"
+    },
+    "trigger/generate-spec.ts": {
+      "contentHash": "fbac90589a708fc4a84e6483273eecbb",
+      "contents": "eJyVWO9uG7kR/66nmG6MYpVbr5ykblG5ii9N2tRAjASxg+LgMyJqd6TlmUsuSK5kWSegn/oARZ/wnqQYcv9Qkh2k35bk/P3NDGe4vKyUtrABkxVYsmtm7hIo0bKcWZaAUIsFatjCXKsSoh+t5rSR5rgcmfxutHwVnQ14K2OBEjWzeI33tuNhPCRRFUqtahsK7fdGjB+b/O640mrJc9QhZ1X3Mn9cos5QjGZCzUIazWSuyi9fLt51pJleV1b1RJXmpmStnJHgs5HfCuU8dOwPKo/OBoNMSWNBqhyvHE4wgYdUzX7BzMabAQDPx/CQGqu5XMTDZABg1xWGe6mqLFeSCX9cKcNpPQ7kwD2tZF3OUMfDBNbhEraOj8Iy3tUNINgMxb4BAJkSSn/DBgBTsG9a6XWueG6L0JY9qgL5orBPEmyHHYCYL74bQKNqneEBrEwv0O7v7qNyiEhgEWyftC8rmL1EY9j/YSbKHPX+rlbCmY6yLuObqDaoowQiZgw3lkkb3TqyTEmL8sAdy0s0lpXV05g0gpnOCm4xsySdrI9un3SOy6q2j7tVaUXfFzvepSWX8YvGHVU+eUhq/8GNVdolLNOareMDJIdpjnNWCxvfeN+pmEzP0NfWASVlTUDZJ9EepfN1XsuM3IdZzUX+lsklM+/QZJo7VOJQM5dz1H+hSlXzoLhf39zuqN0h67U7suEYPCSw8fFsrokPXKKBideVlqyKXcHFcgiT1+4TYHoMRxuZ8nwLN/RBWZy6koTzc4g0ZpbJhcBoezuGqKNwub2NpvBDIyduDly9wzlMIW5Kv+Nx6+1wCmOIIgcqYRUafMkqMhdXcMmquDfbWww3ZGcCoQm3w+FZJ4JgaX12wHlmdMyb5joiQp/CH0hAA88lq9IF2hhTfzYk79vFWcDqa/9xVn/WsPpFyCoaJnT2n3sHHFQ3RxsMcb31GHlmjbbW0gcqMHwLv/37P3C0CQzaHm08//TM3ZsBuhXT1rRpcnMLE7i5JSI+h7hLlVSgXNgCXsPJsMHL8aVVbYo4evYM3qqyUhKlNT/LCH7osyz9RXEZRz/LyAdk28juQvI9sqVEVzaN8J73EeENKl5Ge04UZ4PtQQEWzF7VZcn0Oj68K3Yq6+DKeLLAuluvIaekCySncy4s6qbiSpeCvyubhIJff4XuezKZQHiH+rrw8B0oaWEkppNhiwKlSmeYaCrgkLe/Abw906NNmVKX8Da4BgHnEH1xH2OI3lxEWyrgMm2axHbamdeqfvYM3qHhC0kBXKI2jID3ERR70XOx8VZe/XR1/bfLr58+f7z8dA0TmP6kamAa4X2hjIU3Fwkw6mtcaTBqbld01rmUwvtmzAMGtlBa1YsCLGaF5BkTYCrM+JxnzhbIVVaXKKn7wCXTd7laSZgrDbZAMGtjsexF1xrBFETBpSPI3PWdDgbXRL0j2BSqFjlwmYk6x/HgRQrPn195gR+XqJccV8+fw2//+i9Uta6UwQQKviiOBS5RgPE5mQCTOdzhGnIP5EIxYQYvSdib0Ky++hqhed9TgNoCywrIWqIEuDVuCPAKNJpKScNnXHDL0QxekYJ3zDL4u1CtnYVauUkGSrVEAzO0K0TZSzVJ4y5VA9nMpUXNfN0O/uBs/nRBuWBpt7VUKstmAj31nGVoQGmSWtayRbNi1qKWvVJDCGZoBqck9pqiq4RarEm6odHc8bUqNApcMmldGoCxLLuDrFAkIKHhwqpMCZN4vdJYzbi0BnhZCY45zNYu2j4Egz+6SGZMMAfXGn4Pn1HwZtXGVFFNcCZgpqwVKDG7MwnMGRcUrpL6l8e+5JYvmpyxlLYLCsCfnBLMak0aHnWK1bYgHR6ixK2V5g/tUuY+WuSfvzzJuYxgHAz+qbklyCETyHRQHpVWBlP4YhAKZDlqk8CsFgItVIq7IJPkTOUIM6GyOwOrAqkAq0qrSnNmMYWPtaX3UCVYWFdKinUTcqg0spLCrjTgfSWY9Bio2pKrHvCuOK1BMU+nZ4MB3rs3kL8p2gfdVYUZTII3YjcMRy3JMZWnu0E91TicNxN/adGl7/tPye7fWItlRZ3xlX+MzFlmaWh56Zcll9e8RFXbC3lpxvDi5OQkaZn3Tr52Z/4FyB9wDFbX6B4xTnstx8DMWmYQV2wtFMuD0cQ/c6kdqXjXI0pmbTGPkoZ0Z1huJKXdVtLQtANzS+DX7Sm17reqpsG/JfADl+8wLRk14T0yP1qFZM2oAd2jPTVo48hYZmtDr4LGHS4X0dCfVVotNBo6PWm5m/fP/rgMk2/M0X6QCOxP9jadtX5zGE5jWT8UdAqCOaFlD1r6rpnULT9pVVaWhqlGaRS2pSe6Udt45koItaJr9JEWlEatH1H3dQBMdxC4cg6R773h5riTctuwtOPJX5USyOSw3Q579SMRDaL28nS4H+WMCcHl4ivjHftOUr/15/AeSy65A8Kld5sdqlfrMd6A9X9xJsBWjNudnztxWwt0z4px8FcnjhZyyXPORhJLZbWSx6+Oa2E1Oz49PZkds9PT2XiuEaNhC6EPwXh3LEn6YisrOw5C/s20D0D688kBSHMumeAPrhQeA2m38qnvCrRIpe/A+uDKbuyAaYfB7S5qRHaRwyT4ExXvpD79seogrWrb1tGUOM3oaHNwpWxHRxsvdpuW+bQFhoxov9toALAsQ2PGEFWaLxnZ3h01Y+S1+y8VEfuobBpHQMXy/LMz/aqez/n9GOZMGAzOqXBovlpRg9s73na1HnisMVM67312P9ta96ixpJlGZrHLKf8zp/eJ2owHoDfje+5ggDkX+IlRyAj2tNZiz9Lto2ngol+hpn81/uZv9I8bZ9xTuNail/sd+fji5DAhuxRruZvJ3iv0mZYcKoftme9rpPV/jlEVFw=="
+    },
+    "tsconfig.json": {
+      "contentHash": "02fc19ad21338c2ab820a70136310db4",
+      "contents": "eJxtUU1Lw0AQvedXLHMMbaJehJ4E6cFiEfRYimyyQ7t2v9id1EjJf5fdJNVET8O892b2vdlLxhjUVjup0L84ktYEWLFLxhhjQNwfkGDFYP12d3N7D4seV7KCFduBsBoWLJZCEnpeKYw9BoMtwX5Qc6Xs5yauJd/gAIaTdM+yejxifZox5GVNU8zYtZYzDMPWikbhkyH01k1JnajofDAzwV8xWNXEsFFRNUYo9KPER/KMm2DNdtzya7MMVnFC0XOzVB+hjRs98pqWsRmHTO1RoyGupgNONQeZTr5LABtO36fmOkVIAQa4S3U8reN0/PkvxuChzNPPFGUO+2wc6KI8mlCNwOtbae8SzbkQBYXRap6X+d/2mqSIQyV9OQzlTNpTAs//06nVFGKS5B+wvRoCYwW+6+Gm+6zLvgEbXbUJ"
+    }
+  },
+  "target": "dev"
+}
