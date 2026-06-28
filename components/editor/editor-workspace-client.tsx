@@ -1,7 +1,9 @@
 "use client"
 
 import { useState, useCallback, useRef } from "react"
-import { PanelLeftOpen, PanelLeftClose, Share2, Sparkles, LayoutTemplate } from "lucide-react"
+import { PanelLeftOpen, PanelLeftClose, Share2, Sparkles, LayoutTemplate, Save, Check, Loader2 } from "lucide-react"
+import { LiveblocksProvider, RoomProvider } from "@liveblocks/react"
+import { LiveList } from "@liveblocks/client"
 import { Button } from "@/components/ui/button"
 import { ProjectSidebar } from "@/components/editor/project-sidebar"
 import { ProjectDialogs } from "@/components/editor/project-dialogs"
@@ -37,9 +39,11 @@ export function EditorWorkspaceClient({
   const actions = useProjectActions()
 
   return (
+    <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
+    <RoomProvider id={project.id} initialPresence={{ cursor: null, thinking: false }} initialStorage={{ aiChat: new LiveList([]) }}>
     <div className="relative flex h-screen flex-col overflow-hidden bg-base">
       <header className="z-10 flex h-12 w-full items-center justify-between border-b border-surface-border bg-surface px-3">
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
@@ -52,24 +56,26 @@ export function EditorWorkspaceClient({
               <PanelLeftOpen className="h-5 w-5" />
             )}
           </Button>
+          <span className="text-sm font-medium text-copy-primary">{project.name}</span>
         </div>
-        <span className="text-sm font-medium text-copy-primary">{project.name}</span>
-        <Button
-          variant="ghost"
-          size="sm"
-          disabled={saveStatus === "saving"}
-          onClick={() => saveRef.current?.()}
-          className="text-xs text-copy-muted hover:text-copy-primary"
-        >
-          {saveStatus === "saving"
-            ? "Saving..."
-            : saveStatus === "saved"
-            ? "Saved"
-            : saveStatus === "error"
-            ? "Error"
-            : "Save"}
-        </Button>
         <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            disabled={saveStatus === "saving"}
+            onClick={() => saveRef.current?.()}
+            className="text-copy-muted hover:text-copy-primary"
+            title={saveStatus === "saving" ? "Saving..." : saveStatus === "saved" ? "Saved" : saveStatus === "error" ? "Error" : "Save"}
+          >
+            {saveStatus === "saving" ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : saveStatus === "saved" ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
+            <span className="sr-only">Save</span>
+          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -126,7 +132,12 @@ export function EditorWorkspaceClient({
         onOpenProject={actions.openProject}
       />
 
-      <AiSidebar isOpen={aiSidebarOpen} onClose={() => setAiSidebarOpen(false)} />
+      <AiSidebar
+        isOpen={aiSidebarOpen}
+        onClose={() => setAiSidebarOpen(false)}
+        projectId={project.id}
+        roomId={project.id}
+      />
 
       <ShareDialog
         open={shareOpen}
@@ -144,5 +155,7 @@ export function EditorWorkspaceClient({
 
       <ProjectDialogs actions={actions} />
     </div>
+    </RoomProvider>
+    </LiveblocksProvider>
   )
 }

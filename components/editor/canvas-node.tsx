@@ -105,7 +105,7 @@ function ColorSwatch({
 
   return (
     <button
-      className="w-4 h-4 rounded-full focus:outline-none"
+      className="w-4 h-4 cursor-pointer rounded-full focus:outline-none"
       aria-label={`Set color ${color.fill}`}
       title={color.fill}
       style={{ background: color.fill, boxShadow: shadow, transition: "box-shadow 0.12s" }}
@@ -132,7 +132,14 @@ export function CanvasNode({ id, data, selected }: NodeProps<CanvasFlowNode>) {
   const openEdit = useCallback(() => {
     setDraft(data.label ?? "")
     setEditing(true)
-    setTimeout(() => textareaRef.current?.focus(), 0)
+    setTimeout(() => {
+      const ta = textareaRef.current
+      if (ta) {
+        ta.style.height = "auto"
+        ta.style.height = `${ta.scrollHeight}px`
+        ta.focus()
+      }
+    }, 0)
   }, [data.label])
 
   const commitEdit = useCallback(() => {
@@ -218,14 +225,14 @@ export function CanvasNode({ id, data, selected }: NodeProps<CanvasFlowNode>) {
       </span>
       {editing && (
         <div
-          className="absolute inset-0 z-20 flex items-center justify-center px-3"
+          className="absolute inset-0 z-20 flex items-center justify-center px-3 nodrag"
           onMouseDown={(e) => e.stopPropagation()}
           onPointerDown={(e) => e.stopPropagation()}
         >
           <textarea
             ref={textareaRef}
-            className="resize-none bg-transparent text-sm text-center leading-tight outline-none border-none w-full"
-            style={{ color: colorPair.text }}
+            className="resize-none text-sm text-center leading-tight outline-none border-none w-full"
+            style={{ color: colorPair.text, background: "transparent", overflow: "hidden" }}
             rows={1}
             value={draft}
             onChange={(e) => {

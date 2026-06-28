@@ -1,0 +1,29 @@
+{
+  "configPath": "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/Documents/ghost-ai/trigger.config.mjs",
+  "customConditions": [
+  ],
+  "prompts": [
+  ],
+  "queues": [
+  ],
+  "runtime": "node",
+  "runtimeVersion": "24.11.0",
+  "tasks": [
+    {
+      "entryPoint": "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/Documents/ghost-ai/trigger/design-agent.mjs",
+      "filePath": "trigger/design-agent.ts",
+      "id": "design-agent",
+      "maxDuration": 3600,
+      "retry": {
+        "factor": 2,
+        "maxAttempts": 3,
+        "maxTimeoutInMs": 10000,
+        "minTimeoutInMs": 1000
+      }
+    }
+  ],
+  "timings": {
+    "trigger/design-agent.ts": 55.44554099999999
+  },
+  "workerEntryPoint": "/Users/arthurkim/Documents/ghost-ai/.trigger/tmp/build-QTTJMF/.npm/_npx/f51a09bd0abf5f10/node_modules/trigger.dev/dist/esm/entryPoints/dev-run-worker.mjs"
+}

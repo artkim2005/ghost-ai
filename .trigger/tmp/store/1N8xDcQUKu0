@@ -1,0 +1,4271 @@
+import {
+  ZodFirstPartyTypeKind,
+  external_exports,
+  generateText,
+  safeParseAsync,
+  toJSONSchema
+} from "../../../chunk-HLGD5UZQ.mjs";
+import "../../../chunk-GL53E3WX.mjs";
+import {
+  EventSourceParserStream,
+  logger,
+  metadata,
+  schemaTask
+} from "../../../chunk-2BXDD6X4.mjs";
+import "../../../chunk-WZGQJWAS.mjs";
+import {
+  __name,
+  init_esm
+} from "../../../chunk-FUV6SSYK.mjs";
+
+// trigger/generate-spec.ts
+init_esm();
+
+// node_modules/@ai-sdk/google/dist/index.mjs
+init_esm();
+
+// node_modules/@ai-sdk/provider-utils/dist/index.mjs
+init_esm();
+
+// node_modules/@ai-sdk/provider/dist/index.mjs
+init_esm();
+var marker = "vercel.ai.error";
+var symbol = Symbol.for(marker);
+var _a;
+var _b;
+var AISDKError = class _AISDKError extends (_b = Error, _a = symbol, _b) {
+  static {
+    __name(this, "_AISDKError");
+  }
+  /**
+   * Creates an AI SDK Error.
+   *
+   * @param {Object} params - The parameters for creating the error.
+   * @param {string} params.name - The name of the error.
+   * @param {string} params.message - The error message.
+   * @param {unknown} [params.cause] - The underlying cause of the error.
+   */
+  constructor({
+    name: name142,
+    message,
+    cause
+  }) {
+    super(message);
+    this[_a] = true;
+    this.name = name142;
+    this.cause = cause;
+  }
+  /**
+   * Checks if the given error is an AI SDK Error.
+   * @param {unknown} error - The error to check.
+   * @returns {boolean} True if the error is an AI SDK Error, false otherwise.
+   */
+  static isInstance(error) {
+    return _AISDKError.hasMarker(error, marker);
+  }
+  static hasMarker(error, marker152) {
+    const markerSymbol = Symbol.for(marker152);
+    return error != null && typeof error === "object" && markerSymbol in error && typeof error[markerSymbol] === "boolean" && error[markerSymbol] === true;
+  }
+};
+var name = "AI_APICallError";
+var marker2 = `vercel.ai.error.${name}`;
+var symbol2 = Symbol.for(marker2);
+var _a2;
+var _b2;
+var APICallError = class extends (_b2 = AISDKError, _a2 = symbol2, _b2) {
+  static {
+    __name(this, "APICallError");
+  }
+  constructor({
+    message,
+    url,
+    requestBodyValues,
+    statusCode,
+    responseHeaders,
+    responseBody,
+    cause,
+    isRetryable = statusCode != null && (statusCode === 408 || // request timeout
+    statusCode === 409 || // conflict
+    statusCode === 429 || // too many requests
+    statusCode >= 500),
+    // server error
+    data
+  }) {
+    super({ name, message, cause });
+    this[_a2] = true;
+    this.url = url;
+    this.requestBodyValues = requestBodyValues;
+    this.statusCode = statusCode;
+    this.responseHeaders = responseHeaders;
+    this.responseBody = responseBody;
+    this.isRetryable = isRetryable;
+    this.data = data;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker2);
+  }
+};
+var name2 = "AI_EmptyResponseBodyError";
+var marker3 = `vercel.ai.error.${name2}`;
+var symbol3 = Symbol.for(marker3);
+var _a3;
+var _b3;
+var EmptyResponseBodyError = class extends (_b3 = AISDKError, _a3 = symbol3, _b3) {
+  static {
+    __name(this, "EmptyResponseBodyError");
+  }
+  // used in isInstance
+  constructor({ message = "Empty response body" } = {}) {
+    super({ name: name2, message });
+    this[_a3] = true;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker3);
+  }
+};
+function getErrorMessage(error) {
+  if (error == null) {
+    return "unknown error";
+  }
+  if (typeof error === "string") {
+    return error;
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return JSON.stringify(error);
+}
+__name(getErrorMessage, "getErrorMessage");
+var name3 = "AI_InvalidArgumentError";
+var marker4 = `vercel.ai.error.${name3}`;
+var symbol4 = Symbol.for(marker4);
+var _a4;
+var _b4;
+var InvalidArgumentError = class extends (_b4 = AISDKError, _a4 = symbol4, _b4) {
+  static {
+    __name(this, "InvalidArgumentError");
+  }
+  constructor({
+    message,
+    cause,
+    argument
+  }) {
+    super({ name: name3, message, cause });
+    this[_a4] = true;
+    this.argument = argument;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker4);
+  }
+};
+var name4 = "AI_InvalidPromptError";
+var marker5 = `vercel.ai.error.${name4}`;
+var symbol5 = Symbol.for(marker5);
+var _a5;
+var _b5;
+var InvalidPromptError = class extends (_b5 = AISDKError, _a5 = symbol5, _b5) {
+  static {
+    __name(this, "InvalidPromptError");
+  }
+  constructor({
+    prompt,
+    message,
+    cause
+  }) {
+    super({ name: name4, message: `Invalid prompt: ${message}`, cause });
+    this[_a5] = true;
+    this.prompt = prompt;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker5);
+  }
+};
+var name5 = "AI_InvalidResponseDataError";
+var marker6 = `vercel.ai.error.${name5}`;
+var symbol6 = Symbol.for(marker6);
+var _a6;
+var _b6;
+var InvalidResponseDataError = class extends (_b6 = AISDKError, _a6 = symbol6, _b6) {
+  static {
+    __name(this, "InvalidResponseDataError");
+  }
+  constructor({
+    data,
+    message = `Invalid response data: ${JSON.stringify(data)}.`
+  }) {
+    super({ name: name5, message });
+    this[_a6] = true;
+    this.data = data;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker6);
+  }
+};
+var name6 = "AI_JSONParseError";
+var marker7 = `vercel.ai.error.${name6}`;
+var symbol7 = Symbol.for(marker7);
+var _a7;
+var _b7;
+var JSONParseError = class extends (_b7 = AISDKError, _a7 = symbol7, _b7) {
+  static {
+    __name(this, "JSONParseError");
+  }
+  constructor({ text, cause }) {
+    super({
+      name: name6,
+      message: `JSON parsing failed: Text: ${text}.
+Error message: ${getErrorMessage(cause)}`,
+      cause
+    });
+    this[_a7] = true;
+    this.text = text;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker7);
+  }
+};
+var name7 = "AI_LoadAPIKeyError";
+var marker8 = `vercel.ai.error.${name7}`;
+var symbol8 = Symbol.for(marker8);
+var _a8;
+var _b8;
+var LoadAPIKeyError = class extends (_b8 = AISDKError, _a8 = symbol8, _b8) {
+  static {
+    __name(this, "LoadAPIKeyError");
+  }
+  // used in isInstance
+  constructor({ message }) {
+    super({ name: name7, message });
+    this[_a8] = true;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker8);
+  }
+};
+var name8 = "AI_LoadSettingError";
+var marker9 = `vercel.ai.error.${name8}`;
+var symbol9 = Symbol.for(marker9);
+var _a9;
+var _b9;
+var LoadSettingError = class extends (_b9 = AISDKError, _a9 = symbol9, _b9) {
+  static {
+    __name(this, "LoadSettingError");
+  }
+  // used in isInstance
+  constructor({ message }) {
+    super({ name: name8, message });
+    this[_a9] = true;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker9);
+  }
+};
+var name9 = "AI_NoContentGeneratedError";
+var marker10 = `vercel.ai.error.${name9}`;
+var symbol10 = Symbol.for(marker10);
+var _a10;
+var _b10;
+var NoContentGeneratedError = class extends (_b10 = AISDKError, _a10 = symbol10, _b10) {
+  static {
+    __name(this, "NoContentGeneratedError");
+  }
+  // used in isInstance
+  constructor({
+    message = "No content generated."
+  } = {}) {
+    super({ name: name9, message });
+    this[_a10] = true;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker10);
+  }
+};
+var name10 = "AI_NoSuchModelError";
+var marker11 = `vercel.ai.error.${name10}`;
+var symbol11 = Symbol.for(marker11);
+var _a11;
+var _b11;
+var NoSuchModelError = class extends (_b11 = AISDKError, _a11 = symbol11, _b11) {
+  static {
+    __name(this, "NoSuchModelError");
+  }
+  constructor({
+    errorName = name10,
+    modelId,
+    modelType,
+    message = `No such ${modelType}: ${modelId}`
+  }) {
+    super({ name: errorName, message });
+    this[_a11] = true;
+    this.modelId = modelId;
+    this.modelType = modelType;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker11);
+  }
+};
+var name11 = "AI_TooManyEmbeddingValuesForCallError";
+var marker12 = `vercel.ai.error.${name11}`;
+var symbol12 = Symbol.for(marker12);
+var _a12;
+var _b12;
+var TooManyEmbeddingValuesForCallError = class extends (_b12 = AISDKError, _a12 = symbol12, _b12) {
+  static {
+    __name(this, "TooManyEmbeddingValuesForCallError");
+  }
+  constructor(options) {
+    super({
+      name: name11,
+      message: `Too many values for a single embedding call. The ${options.provider} model "${options.modelId}" can only embed up to ${options.maxEmbeddingsPerCall} values per call, but ${options.values.length} values were provided.`
+    });
+    this[_a12] = true;
+    this.provider = options.provider;
+    this.modelId = options.modelId;
+    this.maxEmbeddingsPerCall = options.maxEmbeddingsPerCall;
+    this.values = options.values;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker12);
+  }
+};
+var name12 = "AI_TypeValidationError";
+var marker13 = `vercel.ai.error.${name12}`;
+var symbol13 = Symbol.for(marker13);
+var _a13;
+var _b13;
+var TypeValidationError = class _TypeValidationError extends (_b13 = AISDKError, _a13 = symbol13, _b13) {
+  static {
+    __name(this, "_TypeValidationError");
+  }
+  constructor({ value, cause }) {
+    super({
+      name: name12,
+      message: `Type validation failed: Value: ${JSON.stringify(value)}.
+Error message: ${getErrorMessage(cause)}`,
+      cause
+    });
+    this[_a13] = true;
+    this.value = value;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker13);
+  }
+  /**
+   * Wraps an error into a TypeValidationError.
+   * If the cause is already a TypeValidationError with the same value, it returns the cause.
+   * Otherwise, it creates a new TypeValidationError.
+   *
+   * @param {Object} params - The parameters for wrapping the error.
+   * @param {unknown} params.value - The value that failed validation.
+   * @param {unknown} params.cause - The original error or cause of the validation failure.
+   * @returns {TypeValidationError} A TypeValidationError instance.
+   */
+  static wrap({
+    value,
+    cause
+  }) {
+    return _TypeValidationError.isInstance(cause) && cause.value === value ? cause : new _TypeValidationError({ value, cause });
+  }
+};
+var name13 = "AI_UnsupportedFunctionalityError";
+var marker14 = `vercel.ai.error.${name13}`;
+var symbol14 = Symbol.for(marker14);
+var _a14;
+var _b14;
+var UnsupportedFunctionalityError = class extends (_b14 = AISDKError, _a14 = symbol14, _b14) {
+  static {
+    __name(this, "UnsupportedFunctionalityError");
+  }
+  constructor({
+    functionality,
+    message = `'${functionality}' functionality not supported.`
+  }) {
+    super({ name: name13, message });
+    this[_a14] = true;
+    this.functionality = functionality;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker14);
+  }
+};
+
+// node_modules/@ai-sdk/provider-utils/dist/index.mjs
+function combineHeaders(...headers) {
+  return headers.reduce(
+    (combinedHeaders, currentHeaders) => ({
+      ...combinedHeaders,
+      ...currentHeaders != null ? currentHeaders : {}
+    }),
+    {}
+  );
+}
+__name(combineHeaders, "combineHeaders");
+function extractResponseHeaders(response) {
+  return Object.fromEntries([...response.headers]);
+}
+__name(extractResponseHeaders, "extractResponseHeaders");
+var { btoa, atob } = globalThis;
+function convertUint8ArrayToBase64(array) {
+  let latin1string = "";
+  for (let i = 0; i < array.length; i++) {
+    latin1string += String.fromCodePoint(array[i]);
+  }
+  return btoa(latin1string);
+}
+__name(convertUint8ArrayToBase64, "convertUint8ArrayToBase64");
+function convertToBase64(value) {
+  return value instanceof Uint8Array ? convertUint8ArrayToBase64(value) : value;
+}
+__name(convertToBase64, "convertToBase64");
+var name14 = "AI_DownloadError";
+var marker15 = `vercel.ai.error.${name14}`;
+var symbol15 = Symbol.for(marker15);
+var _a15;
+var _b15;
+var DownloadError = class extends (_b15 = AISDKError, _a15 = symbol15, _b15) {
+  static {
+    __name(this, "DownloadError");
+  }
+  constructor({
+    url,
+    statusCode,
+    statusText,
+    cause,
+    message = cause == null ? `Failed to download ${url}: ${statusCode} ${statusText}` : `Failed to download ${url}: ${cause}`
+  }) {
+    super({ name: name14, message, cause });
+    this[_a15] = true;
+    this.url = url;
+    this.statusCode = statusCode;
+    this.statusText = statusText;
+  }
+  static isInstance(error) {
+    return AISDKError.hasMarker(error, marker15);
+  }
+};
+var createIdGenerator = /* @__PURE__ */ __name(({
+  prefix,
+  size = 16,
+  alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+  separator = "-"
+} = {}) => {
+  const generator = /* @__PURE__ */ __name(() => {
+    const alphabetLength = alphabet.length;
+    const chars = new Array(size);
+    for (let i = 0; i < size; i++) {
+      chars[i] = alphabet[Math.random() * alphabetLength | 0];
+    }
+    return chars.join("");
+  }, "generator");
+  if (prefix == null) {
+    return generator;
+  }
+  if (alphabet.includes(separator)) {
+    throw new InvalidArgumentError({
+      argument: "separator",
+      message: `The separator "${separator}" must not be part of the alphabet "${alphabet}".`
+    });
+  }
+  return () => `${prefix}${separator}${generator()}`;
+}, "createIdGenerator");
+var generateId = createIdGenerator();
+function isAbortError(error) {
+  return (error instanceof Error || error instanceof DOMException) && (error.name === "AbortError" || error.name === "ResponseAborted" || // Next.js
+  error.name === "TimeoutError");
+}
+__name(isAbortError, "isAbortError");
+var FETCH_FAILED_ERROR_MESSAGES = ["fetch failed", "failed to fetch"];
+function handleFetchError({
+  error,
+  url,
+  requestBodyValues
+}) {
+  if (isAbortError(error)) {
+    return error;
+  }
+  if (error instanceof TypeError && FETCH_FAILED_ERROR_MESSAGES.includes(error.message.toLowerCase())) {
+    const cause = error.cause;
+    if (cause != null) {
+      return new APICallError({
+        message: `Cannot connect to API: ${cause.message}`,
+        cause,
+        url,
+        requestBodyValues,
+        isRetryable: true
+        // retry when network error
+      });
+    }
+  }
+  return error;
+}
+__name(handleFetchError, "handleFetchError");
+function getRuntimeEnvironmentUserAgent(globalThisAny = globalThis) {
+  var _a22, _b22, _c;
+  if (globalThisAny.window) {
+    return `runtime/browser`;
+  }
+  if ((_a22 = globalThisAny.navigator) == null ? void 0 : _a22.userAgent) {
+    return `runtime/${globalThisAny.navigator.userAgent.toLowerCase()}`;
+  }
+  if ((_c = (_b22 = globalThisAny.process) == null ? void 0 : _b22.versions) == null ? void 0 : _c.node) {
+    return `runtime/node.js/${globalThisAny.process.version.substring(0)}`;
+  }
+  if (globalThisAny.EdgeRuntime) {
+    return `runtime/vercel-edge`;
+  }
+  return "runtime/unknown";
+}
+__name(getRuntimeEnvironmentUserAgent, "getRuntimeEnvironmentUserAgent");
+function normalizeHeaders(headers) {
+  if (headers == null) {
+    return {};
+  }
+  const normalized = {};
+  if (headers instanceof Headers) {
+    headers.forEach((value, key) => {
+      normalized[key.toLowerCase()] = value;
+    });
+  } else {
+    if (!Array.isArray(headers)) {
+      headers = Object.entries(headers);
+    }
+    for (const [key, value] of headers) {
+      if (value != null) {
+        normalized[key.toLowerCase()] = value;
+      }
+    }
+  }
+  return normalized;
+}
+__name(normalizeHeaders, "normalizeHeaders");
+function withUserAgentSuffix(headers, ...userAgentSuffixParts) {
+  const normalizedHeaders = new Headers(normalizeHeaders(headers));
+  const currentUserAgentHeader = normalizedHeaders.get("user-agent") || "";
+  normalizedHeaders.set(
+    "user-agent",
+    [currentUserAgentHeader, ...userAgentSuffixParts].filter(Boolean).join(" ")
+  );
+  return Object.fromEntries(normalizedHeaders.entries());
+}
+__name(withUserAgentSuffix, "withUserAgentSuffix");
+var VERSION = true ? "4.0.0" : "0.0.0-test";
+function loadApiKey({
+  apiKey,
+  environmentVariableName,
+  apiKeyParameterName = "apiKey",
+  description
+}) {
+  if (typeof apiKey === "string") {
+    return apiKey;
+  }
+  if (apiKey != null) {
+    throw new LoadAPIKeyError({
+      message: `${description} API key must be a string.`
+    });
+  }
+  if (typeof process === "undefined") {
+    throw new LoadAPIKeyError({
+      message: `${description} API key is missing. Pass it using the '${apiKeyParameterName}' parameter. Environment variables is not supported in this environment.`
+    });
+  }
+  apiKey = process.env[environmentVariableName];
+  if (apiKey == null) {
+    throw new LoadAPIKeyError({
+      message: `${description} API key is missing. Pass it using the '${apiKeyParameterName}' parameter or the ${environmentVariableName} environment variable.`
+    });
+  }
+  if (typeof apiKey !== "string") {
+    throw new LoadAPIKeyError({
+      message: `${description} API key must be a string. The value of the ${environmentVariableName} environment variable is not a string.`
+    });
+  }
+  return apiKey;
+}
+__name(loadApiKey, "loadApiKey");
+var suspectProtoRx = /"__proto__"\s*:/;
+var suspectConstructorRx = /"constructor"\s*:/;
+function _parse(text) {
+  const obj = JSON.parse(text);
+  if (obj === null || typeof obj !== "object") {
+    return obj;
+  }
+  if (suspectProtoRx.test(text) === false && suspectConstructorRx.test(text) === false) {
+    return obj;
+  }
+  return filter(obj);
+}
+__name(_parse, "_parse");
+function filter(obj) {
+  let next = [obj];
+  while (next.length) {
+    const nodes = next;
+    next = [];
+    for (const node of nodes) {
+      if (Object.prototype.hasOwnProperty.call(node, "__proto__")) {
+        throw new SyntaxError("Object contains forbidden prototype property");
+      }
+      if (Object.prototype.hasOwnProperty.call(node, "constructor") && Object.prototype.hasOwnProperty.call(node.constructor, "prototype")) {
+        throw new SyntaxError("Object contains forbidden prototype property");
+      }
+      for (const key in node) {
+        const value = node[key];
+        if (value && typeof value === "object") {
+          next.push(value);
+        }
+      }
+    }
+  }
+  return obj;
+}
+__name(filter, "filter");
+function secureJsonParse(text) {
+  const { stackTraceLimit } = Error;
+  try {
+    Error.stackTraceLimit = 0;
+  } catch (e) {
+    return _parse(text);
+  }
+  try {
+    return _parse(text);
+  } finally {
+    Error.stackTraceLimit = stackTraceLimit;
+  }
+}
+__name(secureJsonParse, "secureJsonParse");
+function addAdditionalPropertiesToJsonSchema(jsonSchema2) {
+  if (jsonSchema2.type === "object") {
+    jsonSchema2.additionalProperties = false;
+    const properties = jsonSchema2.properties;
+    if (properties != null) {
+      for (const property in properties) {
+        properties[property] = addAdditionalPropertiesToJsonSchema(
+          properties[property]
+        );
+      }
+    }
+  }
+  if (jsonSchema2.type === "array" && jsonSchema2.items != null) {
+    if (Array.isArray(jsonSchema2.items)) {
+      jsonSchema2.items = jsonSchema2.items.map(
+        (item) => addAdditionalPropertiesToJsonSchema(item)
+      );
+    } else {
+      jsonSchema2.items = addAdditionalPropertiesToJsonSchema(
+        jsonSchema2.items
+      );
+    }
+  }
+  return jsonSchema2;
+}
+__name(addAdditionalPropertiesToJsonSchema, "addAdditionalPropertiesToJsonSchema");
+var ignoreOverride = Symbol(
+  "Let zodToJsonSchema decide on which parser to use"
+);
+var defaultOptions = {
+  name: void 0,
+  $refStrategy: "root",
+  basePath: ["#"],
+  effectStrategy: "input",
+  pipeStrategy: "all",
+  dateStrategy: "format:date-time",
+  mapStrategy: "entries",
+  removeAdditionalStrategy: "passthrough",
+  allowedAdditionalProperties: true,
+  rejectedAdditionalProperties: false,
+  definitionPath: "definitions",
+  strictUnions: false,
+  definitions: {},
+  errorMessages: false,
+  patternStrategy: "escape",
+  applyRegexFlags: false,
+  emailStrategy: "format:email",
+  base64Strategy: "contentEncoding:base64",
+  nameStrategy: "ref"
+};
+var getDefaultOptions = /* @__PURE__ */ __name((options) => typeof options === "string" ? {
+  ...defaultOptions,
+  name: options
+} : {
+  ...defaultOptions,
+  ...options
+}, "getDefaultOptions");
+function parseAnyDef() {
+  return {};
+}
+__name(parseAnyDef, "parseAnyDef");
+function parseArrayDef(def, refs) {
+  var _a22, _b22, _c;
+  const res = {
+    type: "array"
+  };
+  if (((_a22 = def.type) == null ? void 0 : _a22._def) && ((_c = (_b22 = def.type) == null ? void 0 : _b22._def) == null ? void 0 : _c.typeName) !== ZodFirstPartyTypeKind.ZodAny) {
+    res.items = parseDef(def.type._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "items"]
+    });
+  }
+  if (def.minLength) {
+    res.minItems = def.minLength.value;
+  }
+  if (def.maxLength) {
+    res.maxItems = def.maxLength.value;
+  }
+  if (def.exactLength) {
+    res.minItems = def.exactLength.value;
+    res.maxItems = def.exactLength.value;
+  }
+  return res;
+}
+__name(parseArrayDef, "parseArrayDef");
+function parseBigintDef(def) {
+  const res = {
+    type: "integer",
+    format: "int64"
+  };
+  if (!def.checks) return res;
+  for (const check of def.checks) {
+    switch (check.kind) {
+      case "min":
+        if (check.inclusive) {
+          res.minimum = check.value;
+        } else {
+          res.exclusiveMinimum = check.value;
+        }
+        break;
+      case "max":
+        if (check.inclusive) {
+          res.maximum = check.value;
+        } else {
+          res.exclusiveMaximum = check.value;
+        }
+        break;
+      case "multipleOf":
+        res.multipleOf = check.value;
+        break;
+    }
+  }
+  return res;
+}
+__name(parseBigintDef, "parseBigintDef");
+function parseBooleanDef() {
+  return { type: "boolean" };
+}
+__name(parseBooleanDef, "parseBooleanDef");
+function parseBrandedDef(_def, refs) {
+  return parseDef(_def.type._def, refs);
+}
+__name(parseBrandedDef, "parseBrandedDef");
+var parseCatchDef = /* @__PURE__ */ __name((def, refs) => {
+  return parseDef(def.innerType._def, refs);
+}, "parseCatchDef");
+function parseDateDef(def, refs, overrideDateStrategy) {
+  const strategy = overrideDateStrategy != null ? overrideDateStrategy : refs.dateStrategy;
+  if (Array.isArray(strategy)) {
+    return {
+      anyOf: strategy.map((item, i) => parseDateDef(def, refs, item))
+    };
+  }
+  switch (strategy) {
+    case "string":
+    case "format:date-time":
+      return {
+        type: "string",
+        format: "date-time"
+      };
+    case "format:date":
+      return {
+        type: "string",
+        format: "date"
+      };
+    case "integer":
+      return integerDateParser(def);
+  }
+}
+__name(parseDateDef, "parseDateDef");
+var integerDateParser = /* @__PURE__ */ __name((def) => {
+  const res = {
+    type: "integer",
+    format: "unix-time"
+  };
+  for (const check of def.checks) {
+    switch (check.kind) {
+      case "min":
+        res.minimum = check.value;
+        break;
+      case "max":
+        res.maximum = check.value;
+        break;
+    }
+  }
+  return res;
+}, "integerDateParser");
+function parseDefaultDef(_def, refs) {
+  return {
+    ...parseDef(_def.innerType._def, refs),
+    default: _def.defaultValue()
+  };
+}
+__name(parseDefaultDef, "parseDefaultDef");
+function parseEffectsDef(_def, refs) {
+  return refs.effectStrategy === "input" ? parseDef(_def.schema._def, refs) : parseAnyDef();
+}
+__name(parseEffectsDef, "parseEffectsDef");
+function parseEnumDef(def) {
+  return {
+    type: "string",
+    enum: Array.from(def.values)
+  };
+}
+__name(parseEnumDef, "parseEnumDef");
+var isJsonSchema7AllOfType = /* @__PURE__ */ __name((type) => {
+  if ("type" in type && type.type === "string") return false;
+  return "allOf" in type;
+}, "isJsonSchema7AllOfType");
+function parseIntersectionDef(def, refs) {
+  const allOf = [
+    parseDef(def.left._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "allOf", "0"]
+    }),
+    parseDef(def.right._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "allOf", "1"]
+    })
+  ].filter((x) => !!x);
+  const mergedAllOf = [];
+  allOf.forEach((schema) => {
+    if (isJsonSchema7AllOfType(schema)) {
+      mergedAllOf.push(...schema.allOf);
+    } else {
+      let nestedSchema = schema;
+      if ("additionalProperties" in schema && schema.additionalProperties === false) {
+        const { additionalProperties, ...rest } = schema;
+        nestedSchema = rest;
+      }
+      mergedAllOf.push(nestedSchema);
+    }
+  });
+  return mergedAllOf.length ? { allOf: mergedAllOf } : void 0;
+}
+__name(parseIntersectionDef, "parseIntersectionDef");
+function parseLiteralDef(def) {
+  const parsedType = typeof def.value;
+  if (parsedType !== "bigint" && parsedType !== "number" && parsedType !== "boolean" && parsedType !== "string") {
+    return {
+      type: Array.isArray(def.value) ? "array" : "object"
+    };
+  }
+  return {
+    type: parsedType === "bigint" ? "integer" : parsedType,
+    const: def.value
+  };
+}
+__name(parseLiteralDef, "parseLiteralDef");
+var emojiRegex = void 0;
+var zodPatterns = {
+  /**
+   * `c` was changed to `[cC]` to replicate /i flag
+   */
+  cuid: /^[cC][^\s-]{8,}$/,
+  cuid2: /^[0-9a-z]+$/,
+  ulid: /^[0-9A-HJKMNP-TV-Z]{26}$/,
+  /**
+   * `a-z` was added to replicate /i flag
+   */
+  email: /^(?!\.)(?!.*\.\.)([a-zA-Z0-9_'+\-\.]*)[a-zA-Z0-9_+-]@([a-zA-Z0-9][a-zA-Z0-9\-]*\.)+[a-zA-Z]{2,}$/,
+  /**
+   * Constructed a valid Unicode RegExp
+   *
+   * Lazily instantiate since this type of regex isn't supported
+   * in all envs (e.g. React Native).
+   *
+   * See:
+   * https://github.com/colinhacks/zod/issues/2433
+   * Fix in Zod:
+   * https://github.com/colinhacks/zod/commit/9340fd51e48576a75adc919bff65dbc4a5d4c99b
+   */
+  emoji: /* @__PURE__ */ __name(() => {
+    if (emojiRegex === void 0) {
+      emojiRegex = RegExp(
+        "^(\\p{Extended_Pictographic}|\\p{Emoji_Component})+$",
+        "u"
+      );
+    }
+    return emojiRegex;
+  }, "emoji"),
+  /**
+   * Unused
+   */
+  uuid: /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/,
+  /**
+   * Unused
+   */
+  ipv4: /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/,
+  ipv4Cidr: /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\/(3[0-2]|[12]?[0-9])$/,
+  /**
+   * Unused
+   */
+  ipv6: /^(([a-f0-9]{1,4}:){7}|::([a-f0-9]{1,4}:){0,6}|([a-f0-9]{1,4}:){1}:([a-f0-9]{1,4}:){0,5}|([a-f0-9]{1,4}:){2}:([a-f0-9]{1,4}:){0,4}|([a-f0-9]{1,4}:){3}:([a-f0-9]{1,4}:){0,3}|([a-f0-9]{1,4}:){4}:([a-f0-9]{1,4}:){0,2}|([a-f0-9]{1,4}:){5}:([a-f0-9]{1,4}:){0,1})([a-f0-9]{1,4}|(((25[0-5])|(2[0-4][0-9])|(1[0-9]{2})|([0-9]{1,2}))\.){3}((25[0-5])|(2[0-4][0-9])|(1[0-9]{2})|([0-9]{1,2})))$/,
+  ipv6Cidr: /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$/,
+  base64: /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/,
+  base64url: /^([0-9a-zA-Z-_]{4})*(([0-9a-zA-Z-_]{2}(==)?)|([0-9a-zA-Z-_]{3}(=)?))?$/,
+  nanoid: /^[a-zA-Z0-9_-]{21}$/,
+  jwt: /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]*$/
+};
+function parseStringDef(def, refs) {
+  const res = {
+    type: "string"
+  };
+  if (def.checks) {
+    for (const check of def.checks) {
+      switch (check.kind) {
+        case "min":
+          res.minLength = typeof res.minLength === "number" ? Math.max(res.minLength, check.value) : check.value;
+          break;
+        case "max":
+          res.maxLength = typeof res.maxLength === "number" ? Math.min(res.maxLength, check.value) : check.value;
+          break;
+        case "email":
+          switch (refs.emailStrategy) {
+            case "format:email":
+              addFormat(res, "email", check.message, refs);
+              break;
+            case "format:idn-email":
+              addFormat(res, "idn-email", check.message, refs);
+              break;
+            case "pattern:zod":
+              addPattern(res, zodPatterns.email, check.message, refs);
+              break;
+          }
+          break;
+        case "url":
+          addFormat(res, "uri", check.message, refs);
+          break;
+        case "uuid":
+          addFormat(res, "uuid", check.message, refs);
+          break;
+        case "regex":
+          addPattern(res, check.regex, check.message, refs);
+          break;
+        case "cuid":
+          addPattern(res, zodPatterns.cuid, check.message, refs);
+          break;
+        case "cuid2":
+          addPattern(res, zodPatterns.cuid2, check.message, refs);
+          break;
+        case "startsWith":
+          addPattern(
+            res,
+            RegExp(`^${escapeLiteralCheckValue(check.value, refs)}`),
+            check.message,
+            refs
+          );
+          break;
+        case "endsWith":
+          addPattern(
+            res,
+            RegExp(`${escapeLiteralCheckValue(check.value, refs)}$`),
+            check.message,
+            refs
+          );
+          break;
+        case "datetime":
+          addFormat(res, "date-time", check.message, refs);
+          break;
+        case "date":
+          addFormat(res, "date", check.message, refs);
+          break;
+        case "time":
+          addFormat(res, "time", check.message, refs);
+          break;
+        case "duration":
+          addFormat(res, "duration", check.message, refs);
+          break;
+        case "length":
+          res.minLength = typeof res.minLength === "number" ? Math.max(res.minLength, check.value) : check.value;
+          res.maxLength = typeof res.maxLength === "number" ? Math.min(res.maxLength, check.value) : check.value;
+          break;
+        case "includes": {
+          addPattern(
+            res,
+            RegExp(escapeLiteralCheckValue(check.value, refs)),
+            check.message,
+            refs
+          );
+          break;
+        }
+        case "ip": {
+          if (check.version !== "v6") {
+            addFormat(res, "ipv4", check.message, refs);
+          }
+          if (check.version !== "v4") {
+            addFormat(res, "ipv6", check.message, refs);
+          }
+          break;
+        }
+        case "base64url":
+          addPattern(res, zodPatterns.base64url, check.message, refs);
+          break;
+        case "jwt":
+          addPattern(res, zodPatterns.jwt, check.message, refs);
+          break;
+        case "cidr": {
+          if (check.version !== "v6") {
+            addPattern(res, zodPatterns.ipv4Cidr, check.message, refs);
+          }
+          if (check.version !== "v4") {
+            addPattern(res, zodPatterns.ipv6Cidr, check.message, refs);
+          }
+          break;
+        }
+        case "emoji":
+          addPattern(res, zodPatterns.emoji(), check.message, refs);
+          break;
+        case "ulid": {
+          addPattern(res, zodPatterns.ulid, check.message, refs);
+          break;
+        }
+        case "base64": {
+          switch (refs.base64Strategy) {
+            case "format:binary": {
+              addFormat(res, "binary", check.message, refs);
+              break;
+            }
+            case "contentEncoding:base64": {
+              res.contentEncoding = "base64";
+              break;
+            }
+            case "pattern:zod": {
+              addPattern(res, zodPatterns.base64, check.message, refs);
+              break;
+            }
+          }
+          break;
+        }
+        case "nanoid": {
+          addPattern(res, zodPatterns.nanoid, check.message, refs);
+        }
+        case "toLowerCase":
+        case "toUpperCase":
+        case "trim":
+          break;
+        default:
+          /* @__PURE__ */ ((_) => {
+          })(check);
+      }
+    }
+  }
+  return res;
+}
+__name(parseStringDef, "parseStringDef");
+function escapeLiteralCheckValue(literal, refs) {
+  return refs.patternStrategy === "escape" ? escapeNonAlphaNumeric(literal) : literal;
+}
+__name(escapeLiteralCheckValue, "escapeLiteralCheckValue");
+var ALPHA_NUMERIC = new Set(
+  "ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvxyz0123456789"
+);
+function escapeNonAlphaNumeric(source) {
+  let result = "";
+  for (let i = 0; i < source.length; i++) {
+    if (!ALPHA_NUMERIC.has(source[i])) {
+      result += "\\";
+    }
+    result += source[i];
+  }
+  return result;
+}
+__name(escapeNonAlphaNumeric, "escapeNonAlphaNumeric");
+function addFormat(schema, value, message, refs) {
+  var _a22;
+  if (schema.format || ((_a22 = schema.anyOf) == null ? void 0 : _a22.some((x) => x.format))) {
+    if (!schema.anyOf) {
+      schema.anyOf = [];
+    }
+    if (schema.format) {
+      schema.anyOf.push({
+        format: schema.format
+      });
+      delete schema.format;
+    }
+    schema.anyOf.push({
+      format: value,
+      ...message && refs.errorMessages && { errorMessage: { format: message } }
+    });
+  } else {
+    schema.format = value;
+  }
+}
+__name(addFormat, "addFormat");
+function addPattern(schema, regex, message, refs) {
+  var _a22;
+  if (schema.pattern || ((_a22 = schema.allOf) == null ? void 0 : _a22.some((x) => x.pattern))) {
+    if (!schema.allOf) {
+      schema.allOf = [];
+    }
+    if (schema.pattern) {
+      schema.allOf.push({
+        pattern: schema.pattern
+      });
+      delete schema.pattern;
+    }
+    schema.allOf.push({
+      pattern: stringifyRegExpWithFlags(regex, refs),
+      ...message && refs.errorMessages && { errorMessage: { pattern: message } }
+    });
+  } else {
+    schema.pattern = stringifyRegExpWithFlags(regex, refs);
+  }
+}
+__name(addPattern, "addPattern");
+function stringifyRegExpWithFlags(regex, refs) {
+  var _a22;
+  if (!refs.applyRegexFlags || !regex.flags) {
+    return regex.source;
+  }
+  const flags = {
+    i: regex.flags.includes("i"),
+    // Case-insensitive
+    m: regex.flags.includes("m"),
+    // `^` and `$` matches adjacent to newline characters
+    s: regex.flags.includes("s")
+    // `.` matches newlines
+  };
+  const source = flags.i ? regex.source.toLowerCase() : regex.source;
+  let pattern = "";
+  let isEscaped = false;
+  let inCharGroup = false;
+  let inCharRange = false;
+  for (let i = 0; i < source.length; i++) {
+    if (isEscaped) {
+      pattern += source[i];
+      isEscaped = false;
+      continue;
+    }
+    if (flags.i) {
+      if (inCharGroup) {
+        if (source[i].match(/[a-z]/)) {
+          if (inCharRange) {
+            pattern += source[i];
+            pattern += `${source[i - 2]}-${source[i]}`.toUpperCase();
+            inCharRange = false;
+          } else if (source[i + 1] === "-" && ((_a22 = source[i + 2]) == null ? void 0 : _a22.match(/[a-z]/))) {
+            pattern += source[i];
+            inCharRange = true;
+          } else {
+            pattern += `${source[i]}${source[i].toUpperCase()}`;
+          }
+          continue;
+        }
+      } else if (source[i].match(/[a-z]/)) {
+        pattern += `[${source[i]}${source[i].toUpperCase()}]`;
+        continue;
+      }
+    }
+    if (flags.m) {
+      if (source[i] === "^") {
+        pattern += `(^|(?<=[\r
+]))`;
+        continue;
+      } else if (source[i] === "$") {
+        pattern += `($|(?=[\r
+]))`;
+        continue;
+      }
+    }
+    if (flags.s && source[i] === ".") {
+      pattern += inCharGroup ? `${source[i]}\r
+` : `[${source[i]}\r
+]`;
+      continue;
+    }
+    pattern += source[i];
+    if (source[i] === "\\") {
+      isEscaped = true;
+    } else if (inCharGroup && source[i] === "]") {
+      inCharGroup = false;
+    } else if (!inCharGroup && source[i] === "[") {
+      inCharGroup = true;
+    }
+  }
+  try {
+    new RegExp(pattern);
+  } catch (e) {
+    console.warn(
+      `Could not convert regex pattern at ${refs.currentPath.join(
+        "/"
+      )} to a flag-independent form! Falling back to the flag-ignorant source`
+    );
+    return regex.source;
+  }
+  return pattern;
+}
+__name(stringifyRegExpWithFlags, "stringifyRegExpWithFlags");
+function parseRecordDef(def, refs) {
+  var _a22, _b22, _c, _d, _e, _f;
+  const schema = {
+    type: "object",
+    additionalProperties: (_a22 = parseDef(def.valueType._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "additionalProperties"]
+    })) != null ? _a22 : refs.allowedAdditionalProperties
+  };
+  if (((_b22 = def.keyType) == null ? void 0 : _b22._def.typeName) === ZodFirstPartyTypeKind.ZodString && ((_c = def.keyType._def.checks) == null ? void 0 : _c.length)) {
+    const { type, ...keyType } = parseStringDef(def.keyType._def, refs);
+    return {
+      ...schema,
+      propertyNames: keyType
+    };
+  } else if (((_d = def.keyType) == null ? void 0 : _d._def.typeName) === ZodFirstPartyTypeKind.ZodEnum) {
+    return {
+      ...schema,
+      propertyNames: {
+        enum: def.keyType._def.values
+      }
+    };
+  } else if (((_e = def.keyType) == null ? void 0 : _e._def.typeName) === ZodFirstPartyTypeKind.ZodBranded && def.keyType._def.type._def.typeName === ZodFirstPartyTypeKind.ZodString && ((_f = def.keyType._def.type._def.checks) == null ? void 0 : _f.length)) {
+    const { type, ...keyType } = parseBrandedDef(
+      def.keyType._def,
+      refs
+    );
+    return {
+      ...schema,
+      propertyNames: keyType
+    };
+  }
+  return schema;
+}
+__name(parseRecordDef, "parseRecordDef");
+function parseMapDef(def, refs) {
+  if (refs.mapStrategy === "record") {
+    return parseRecordDef(def, refs);
+  }
+  const keys = parseDef(def.keyType._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "items", "items", "0"]
+  }) || parseAnyDef();
+  const values = parseDef(def.valueType._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "items", "items", "1"]
+  }) || parseAnyDef();
+  return {
+    type: "array",
+    maxItems: 125,
+    items: {
+      type: "array",
+      items: [keys, values],
+      minItems: 2,
+      maxItems: 2
+    }
+  };
+}
+__name(parseMapDef, "parseMapDef");
+function parseNativeEnumDef(def) {
+  const object = def.values;
+  const actualKeys = Object.keys(def.values).filter((key) => {
+    return typeof object[object[key]] !== "number";
+  });
+  const actualValues = actualKeys.map((key) => object[key]);
+  const parsedTypes = Array.from(
+    new Set(actualValues.map((values) => typeof values))
+  );
+  return {
+    type: parsedTypes.length === 1 ? parsedTypes[0] === "string" ? "string" : "number" : ["string", "number"],
+    enum: actualValues
+  };
+}
+__name(parseNativeEnumDef, "parseNativeEnumDef");
+function parseNeverDef() {
+  return { not: parseAnyDef() };
+}
+__name(parseNeverDef, "parseNeverDef");
+function parseNullDef() {
+  return {
+    type: "null"
+  };
+}
+__name(parseNullDef, "parseNullDef");
+var primitiveMappings = {
+  ZodString: "string",
+  ZodNumber: "number",
+  ZodBigInt: "integer",
+  ZodBoolean: "boolean",
+  ZodNull: "null"
+};
+function parseUnionDef(def, refs) {
+  const options = def.options instanceof Map ? Array.from(def.options.values()) : def.options;
+  if (options.every(
+    (x) => x._def.typeName in primitiveMappings && (!x._def.checks || !x._def.checks.length)
+  )) {
+    const types = options.reduce((types2, x) => {
+      const type = primitiveMappings[x._def.typeName];
+      return type && !types2.includes(type) ? [...types2, type] : types2;
+    }, []);
+    return {
+      type: types.length > 1 ? types : types[0]
+    };
+  } else if (options.every((x) => x._def.typeName === "ZodLiteral" && !x.description)) {
+    const types = options.reduce(
+      (acc, x) => {
+        const type = typeof x._def.value;
+        switch (type) {
+          case "string":
+          case "number":
+          case "boolean":
+            return [...acc, type];
+          case "bigint":
+            return [...acc, "integer"];
+          case "object":
+            if (x._def.value === null) return [...acc, "null"];
+          case "symbol":
+          case "undefined":
+          case "function":
+          default:
+            return acc;
+        }
+      },
+      []
+    );
+    if (types.length === options.length) {
+      const uniqueTypes = types.filter((x, i, a) => a.indexOf(x) === i);
+      return {
+        type: uniqueTypes.length > 1 ? uniqueTypes : uniqueTypes[0],
+        enum: options.reduce(
+          (acc, x) => {
+            return acc.includes(x._def.value) ? acc : [...acc, x._def.value];
+          },
+          []
+        )
+      };
+    }
+  } else if (options.every((x) => x._def.typeName === "ZodEnum")) {
+    return {
+      type: "string",
+      enum: options.reduce(
+        (acc, x) => [
+          ...acc,
+          ...x._def.values.filter((x2) => !acc.includes(x2))
+        ],
+        []
+      )
+    };
+  }
+  return asAnyOf(def, refs);
+}
+__name(parseUnionDef, "parseUnionDef");
+var asAnyOf = /* @__PURE__ */ __name((def, refs) => {
+  const anyOf = (def.options instanceof Map ? Array.from(def.options.values()) : def.options).map(
+    (x, i) => parseDef(x._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "anyOf", `${i}`]
+    })
+  ).filter(
+    (x) => !!x && (!refs.strictUnions || typeof x === "object" && Object.keys(x).length > 0)
+  );
+  return anyOf.length ? { anyOf } : void 0;
+}, "asAnyOf");
+function parseNullableDef(def, refs) {
+  if (["ZodString", "ZodNumber", "ZodBigInt", "ZodBoolean", "ZodNull"].includes(
+    def.innerType._def.typeName
+  ) && (!def.innerType._def.checks || !def.innerType._def.checks.length)) {
+    return {
+      type: [
+        primitiveMappings[def.innerType._def.typeName],
+        "null"
+      ]
+    };
+  }
+  const base = parseDef(def.innerType._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "anyOf", "0"]
+  });
+  return base && { anyOf: [base, { type: "null" }] };
+}
+__name(parseNullableDef, "parseNullableDef");
+function parseNumberDef(def) {
+  const res = {
+    type: "number"
+  };
+  if (!def.checks) return res;
+  for (const check of def.checks) {
+    switch (check.kind) {
+      case "int":
+        res.type = "integer";
+        break;
+      case "min":
+        if (check.inclusive) {
+          res.minimum = check.value;
+        } else {
+          res.exclusiveMinimum = check.value;
+        }
+        break;
+      case "max":
+        if (check.inclusive) {
+          res.maximum = check.value;
+        } else {
+          res.exclusiveMaximum = check.value;
+        }
+        break;
+      case "multipleOf":
+        res.multipleOf = check.value;
+        break;
+    }
+  }
+  return res;
+}
+__name(parseNumberDef, "parseNumberDef");
+function parseObjectDef(def, refs) {
+  const result = {
+    type: "object",
+    properties: {}
+  };
+  const required = [];
+  const shape = def.shape();
+  for (const propName in shape) {
+    let propDef = shape[propName];
+    if (propDef === void 0 || propDef._def === void 0) {
+      continue;
+    }
+    const propOptional = safeIsOptional(propDef);
+    const parsedDef = parseDef(propDef._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "properties", propName],
+      propertyPath: [...refs.currentPath, "properties", propName]
+    });
+    if (parsedDef === void 0) {
+      continue;
+    }
+    result.properties[propName] = parsedDef;
+    if (!propOptional) {
+      required.push(propName);
+    }
+  }
+  if (required.length) {
+    result.required = required;
+  }
+  const additionalProperties = decideAdditionalProperties(def, refs);
+  if (additionalProperties !== void 0) {
+    result.additionalProperties = additionalProperties;
+  }
+  return result;
+}
+__name(parseObjectDef, "parseObjectDef");
+function decideAdditionalProperties(def, refs) {
+  if (def.catchall._def.typeName !== "ZodNever") {
+    return parseDef(def.catchall._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "additionalProperties"]
+    });
+  }
+  switch (def.unknownKeys) {
+    case "passthrough":
+      return refs.allowedAdditionalProperties;
+    case "strict":
+      return refs.rejectedAdditionalProperties;
+    case "strip":
+      return refs.removeAdditionalStrategy === "strict" ? refs.allowedAdditionalProperties : refs.rejectedAdditionalProperties;
+  }
+}
+__name(decideAdditionalProperties, "decideAdditionalProperties");
+function safeIsOptional(schema) {
+  try {
+    return schema.isOptional();
+  } catch (e) {
+    return true;
+  }
+}
+__name(safeIsOptional, "safeIsOptional");
+var parseOptionalDef = /* @__PURE__ */ __name((def, refs) => {
+  var _a22;
+  if (refs.currentPath.toString() === ((_a22 = refs.propertyPath) == null ? void 0 : _a22.toString())) {
+    return parseDef(def.innerType._def, refs);
+  }
+  const innerSchema = parseDef(def.innerType._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "anyOf", "1"]
+  });
+  return innerSchema ? { anyOf: [{ not: parseAnyDef() }, innerSchema] } : parseAnyDef();
+}, "parseOptionalDef");
+var parsePipelineDef = /* @__PURE__ */ __name((def, refs) => {
+  if (refs.pipeStrategy === "input") {
+    return parseDef(def.in._def, refs);
+  } else if (refs.pipeStrategy === "output") {
+    return parseDef(def.out._def, refs);
+  }
+  const a = parseDef(def.in._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "allOf", "0"]
+  });
+  const b = parseDef(def.out._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "allOf", a ? "1" : "0"]
+  });
+  return {
+    allOf: [a, b].filter((x) => x !== void 0)
+  };
+}, "parsePipelineDef");
+function parsePromiseDef(def, refs) {
+  return parseDef(def.type._def, refs);
+}
+__name(parsePromiseDef, "parsePromiseDef");
+function parseSetDef(def, refs) {
+  const items = parseDef(def.valueType._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "items"]
+  });
+  const schema = {
+    type: "array",
+    uniqueItems: true,
+    items
+  };
+  if (def.minSize) {
+    schema.minItems = def.minSize.value;
+  }
+  if (def.maxSize) {
+    schema.maxItems = def.maxSize.value;
+  }
+  return schema;
+}
+__name(parseSetDef, "parseSetDef");
+function parseTupleDef(def, refs) {
+  if (def.rest) {
+    return {
+      type: "array",
+      minItems: def.items.length,
+      items: def.items.map(
+        (x, i) => parseDef(x._def, {
+          ...refs,
+          currentPath: [...refs.currentPath, "items", `${i}`]
+        })
+      ).reduce(
+        (acc, x) => x === void 0 ? acc : [...acc, x],
+        []
+      ),
+      additionalItems: parseDef(def.rest._def, {
+        ...refs,
+        currentPath: [...refs.currentPath, "additionalItems"]
+      })
+    };
+  } else {
+    return {
+      type: "array",
+      minItems: def.items.length,
+      maxItems: def.items.length,
+      items: def.items.map(
+        (x, i) => parseDef(x._def, {
+          ...refs,
+          currentPath: [...refs.currentPath, "items", `${i}`]
+        })
+      ).reduce(
+        (acc, x) => x === void 0 ? acc : [...acc, x],
+        []
+      )
+    };
+  }
+}
+__name(parseTupleDef, "parseTupleDef");
+function parseUndefinedDef() {
+  return {
+    not: parseAnyDef()
+  };
+}
+__name(parseUndefinedDef, "parseUndefinedDef");
+function parseUnknownDef() {
+  return parseAnyDef();
+}
+__name(parseUnknownDef, "parseUnknownDef");
+var parseReadonlyDef = /* @__PURE__ */ __name((def, refs) => {
+  return parseDef(def.innerType._def, refs);
+}, "parseReadonlyDef");
+var selectParser = /* @__PURE__ */ __name((def, typeName, refs) => {
+  switch (typeName) {
+    case ZodFirstPartyTypeKind.ZodString:
+      return parseStringDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodNumber:
+      return parseNumberDef(def);
+    case ZodFirstPartyTypeKind.ZodObject:
+      return parseObjectDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodBigInt:
+      return parseBigintDef(def);
+    case ZodFirstPartyTypeKind.ZodBoolean:
+      return parseBooleanDef();
+    case ZodFirstPartyTypeKind.ZodDate:
+      return parseDateDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodUndefined:
+      return parseUndefinedDef();
+    case ZodFirstPartyTypeKind.ZodNull:
+      return parseNullDef();
+    case ZodFirstPartyTypeKind.ZodArray:
+      return parseArrayDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodUnion:
+    case ZodFirstPartyTypeKind.ZodDiscriminatedUnion:
+      return parseUnionDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodIntersection:
+      return parseIntersectionDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodTuple:
+      return parseTupleDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodRecord:
+      return parseRecordDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodLiteral:
+      return parseLiteralDef(def);
+    case ZodFirstPartyTypeKind.ZodEnum:
+      return parseEnumDef(def);
+    case ZodFirstPartyTypeKind.ZodNativeEnum:
+      return parseNativeEnumDef(def);
+    case ZodFirstPartyTypeKind.ZodNullable:
+      return parseNullableDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodOptional:
+      return parseOptionalDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodMap:
+      return parseMapDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodSet:
+      return parseSetDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodLazy:
+      return () => def.getter()._def;
+    case ZodFirstPartyTypeKind.ZodPromise:
+      return parsePromiseDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodNaN:
+    case ZodFirstPartyTypeKind.ZodNever:
+      return parseNeverDef();
+    case ZodFirstPartyTypeKind.ZodEffects:
+      return parseEffectsDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodAny:
+      return parseAnyDef();
+    case ZodFirstPartyTypeKind.ZodUnknown:
+      return parseUnknownDef();
+    case ZodFirstPartyTypeKind.ZodDefault:
+      return parseDefaultDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodBranded:
+      return parseBrandedDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodReadonly:
+      return parseReadonlyDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodCatch:
+      return parseCatchDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodPipeline:
+      return parsePipelineDef(def, refs);
+    case ZodFirstPartyTypeKind.ZodFunction:
+    case ZodFirstPartyTypeKind.ZodVoid:
+    case ZodFirstPartyTypeKind.ZodSymbol:
+      return void 0;
+    default:
+      return /* @__PURE__ */ ((_) => void 0)(typeName);
+  }
+}, "selectParser");
+var getRelativePath = /* @__PURE__ */ __name((pathA, pathB) => {
+  let i = 0;
+  for (; i < pathA.length && i < pathB.length; i++) {
+    if (pathA[i] !== pathB[i]) break;
+  }
+  return [(pathA.length - i).toString(), ...pathB.slice(i)].join("/");
+}, "getRelativePath");
+function parseDef(def, refs, forceResolution = false) {
+  var _a22;
+  const seenItem = refs.seen.get(def);
+  if (refs.override) {
+    const overrideResult = (_a22 = refs.override) == null ? void 0 : _a22.call(
+      refs,
+      def,
+      refs,
+      seenItem,
+      forceResolution
+    );
+    if (overrideResult !== ignoreOverride) {
+      return overrideResult;
+    }
+  }
+  if (seenItem && !forceResolution) {
+    const seenSchema = get$ref(seenItem, refs);
+    if (seenSchema !== void 0) {
+      return seenSchema;
+    }
+  }
+  const newItem = { def, path: refs.currentPath, jsonSchema: void 0 };
+  refs.seen.set(def, newItem);
+  const jsonSchemaOrGetter = selectParser(def, def.typeName, refs);
+  const jsonSchema2 = typeof jsonSchemaOrGetter === "function" ? parseDef(jsonSchemaOrGetter(), refs) : jsonSchemaOrGetter;
+  if (jsonSchema2) {
+    addMeta(def, refs, jsonSchema2);
+  }
+  if (refs.postProcess) {
+    const postProcessResult = refs.postProcess(jsonSchema2, def, refs);
+    newItem.jsonSchema = jsonSchema2;
+    return postProcessResult;
+  }
+  newItem.jsonSchema = jsonSchema2;
+  return jsonSchema2;
+}
+__name(parseDef, "parseDef");
+var get$ref = /* @__PURE__ */ __name((item, refs) => {
+  switch (refs.$refStrategy) {
+    case "root":
+      return { $ref: item.path.join("/") };
+    case "relative":
+      return { $ref: getRelativePath(refs.currentPath, item.path) };
+    case "none":
+    case "seen": {
+      if (item.path.length < refs.currentPath.length && item.path.every((value, index) => refs.currentPath[index] === value)) {
+        console.warn(
+          `Recursive reference detected at ${refs.currentPath.join(
+            "/"
+          )}! Defaulting to any`
+        );
+        return parseAnyDef();
+      }
+      return refs.$refStrategy === "seen" ? parseAnyDef() : void 0;
+    }
+  }
+}, "get$ref");
+var addMeta = /* @__PURE__ */ __name((def, refs, jsonSchema2) => {
+  if (def.description) {
+    jsonSchema2.description = def.description;
+  }
+  return jsonSchema2;
+}, "addMeta");
+var getRefs = /* @__PURE__ */ __name((options) => {
+  const _options = getDefaultOptions(options);
+  const currentPath = _options.name !== void 0 ? [..._options.basePath, _options.definitionPath, _options.name] : _options.basePath;
+  return {
+    ..._options,
+    currentPath,
+    propertyPath: void 0,
+    seen: new Map(
+      Object.entries(_options.definitions).map(([name22, def]) => [
+        def._def,
+        {
+          def: def._def,
+          path: [..._options.basePath, _options.definitionPath, name22],
+          // Resolution of references will be forced even though seen, so it's ok that the schema is undefined here for now.
+          jsonSchema: void 0
+        }
+      ])
+    )
+  };
+}, "getRefs");
+var zod3ToJsonSchema = /* @__PURE__ */ __name((schema, options) => {
+  var _a22;
+  const refs = getRefs(options);
+  let definitions = typeof options === "object" && options.definitions ? Object.entries(options.definitions).reduce(
+    (acc, [name32, schema2]) => {
+      var _a32;
+      return {
+        ...acc,
+        [name32]: (_a32 = parseDef(
+          schema2._def,
+          {
+            ...refs,
+            currentPath: [...refs.basePath, refs.definitionPath, name32]
+          },
+          true
+        )) != null ? _a32 : parseAnyDef()
+      };
+    },
+    {}
+  ) : void 0;
+  const name22 = typeof options === "string" ? options : (options == null ? void 0 : options.nameStrategy) === "title" ? void 0 : options == null ? void 0 : options.name;
+  const main = (_a22 = parseDef(
+    schema._def,
+    name22 === void 0 ? refs : {
+      ...refs,
+      currentPath: [...refs.basePath, refs.definitionPath, name22]
+    },
+    false
+  )) != null ? _a22 : parseAnyDef();
+  const title = typeof options === "object" && options.name !== void 0 && options.nameStrategy === "title" ? options.name : void 0;
+  if (title !== void 0) {
+    main.title = title;
+  }
+  const combined = name22 === void 0 ? definitions ? {
+    ...main,
+    [refs.definitionPath]: definitions
+  } : main : {
+    $ref: [
+      ...refs.$refStrategy === "relative" ? [] : refs.basePath,
+      refs.definitionPath,
+      name22
+    ].join("/"),
+    [refs.definitionPath]: {
+      ...definitions,
+      [name22]: main
+    }
+  };
+  combined.$schema = "http://json-schema.org/draft-07/schema#";
+  return combined;
+}, "zod3ToJsonSchema");
+var schemaSymbol = Symbol.for("vercel.ai.schema");
+function lazySchema(createSchema) {
+  let schema;
+  return () => {
+    if (schema == null) {
+      schema = createSchema();
+    }
+    return schema;
+  };
+}
+__name(lazySchema, "lazySchema");
+function jsonSchema(jsonSchema2, {
+  validate
+} = {}) {
+  return {
+    [schemaSymbol]: true,
+    _type: void 0,
+    // should never be used directly
+    get jsonSchema() {
+      if (typeof jsonSchema2 === "function") {
+        jsonSchema2 = jsonSchema2();
+      }
+      return jsonSchema2;
+    },
+    validate
+  };
+}
+__name(jsonSchema, "jsonSchema");
+function isSchema(value) {
+  return typeof value === "object" && value !== null && schemaSymbol in value && value[schemaSymbol] === true && "jsonSchema" in value && "validate" in value;
+}
+__name(isSchema, "isSchema");
+function asSchema(schema) {
+  return schema == null ? jsonSchema({ properties: {}, additionalProperties: false }) : isSchema(schema) ? schema : "~standard" in schema ? schema["~standard"].vendor === "zod" ? zodSchema(schema) : standardSchema(schema) : schema();
+}
+__name(asSchema, "asSchema");
+function standardSchema(standardSchema2) {
+  return jsonSchema(
+    () => standardSchema2["~standard"].jsonSchema.input({
+      target: "draft-07"
+    }),
+    {
+      validate: /* @__PURE__ */ __name(async (value) => {
+        const result = await standardSchema2["~standard"].validate(value);
+        return "value" in result ? { success: true, value: result.value } : {
+          success: false,
+          error: new TypeValidationError({
+            value,
+            cause: result.issues
+          })
+        };
+      }, "validate")
+    }
+  );
+}
+__name(standardSchema, "standardSchema");
+function zod3Schema(zodSchema2, options) {
+  var _a22;
+  const useReferences = (_a22 = options == null ? void 0 : options.useReferences) != null ? _a22 : false;
+  return jsonSchema(
+    // defer json schema creation to avoid unnecessary computation when only validation is needed
+    () => zod3ToJsonSchema(zodSchema2, {
+      $refStrategy: useReferences ? "root" : "none"
+    }),
+    {
+      validate: /* @__PURE__ */ __name(async (value) => {
+        const result = await zodSchema2.safeParseAsync(value);
+        return result.success ? { success: true, value: result.data } : { success: false, error: result.error };
+      }, "validate")
+    }
+  );
+}
+__name(zod3Schema, "zod3Schema");
+function zod4Schema(zodSchema2, options) {
+  var _a22;
+  const useReferences = (_a22 = options == null ? void 0 : options.useReferences) != null ? _a22 : false;
+  return jsonSchema(
+    // defer json schema creation to avoid unnecessary computation when only validation is needed
+    () => addAdditionalPropertiesToJsonSchema(
+      toJSONSchema(zodSchema2, {
+        target: "draft-7",
+        io: "input",
+        reused: useReferences ? "ref" : "inline"
+      })
+    ),
+    {
+      validate: /* @__PURE__ */ __name(async (value) => {
+        const result = await safeParseAsync(zodSchema2, value);
+        return result.success ? { success: true, value: result.data } : { success: false, error: result.error };
+      }, "validate")
+    }
+  );
+}
+__name(zod4Schema, "zod4Schema");
+function isZod4Schema(zodSchema2) {
+  return "_zod" in zodSchema2;
+}
+__name(isZod4Schema, "isZod4Schema");
+function zodSchema(zodSchema2, options) {
+  if (isZod4Schema(zodSchema2)) {
+    return zod4Schema(zodSchema2, options);
+  } else {
+    return zod3Schema(zodSchema2, options);
+  }
+}
+__name(zodSchema, "zodSchema");
+async function validateTypes({
+  value,
+  schema
+}) {
+  const result = await safeValidateTypes({ value, schema });
+  if (!result.success) {
+    throw TypeValidationError.wrap({ value, cause: result.error });
+  }
+  return result.value;
+}
+__name(validateTypes, "validateTypes");
+async function safeValidateTypes({
+  value,
+  schema
+}) {
+  const actualSchema = asSchema(schema);
+  try {
+    if (actualSchema.validate == null) {
+      return { success: true, value, rawValue: value };
+    }
+    const result = await actualSchema.validate(value);
+    if (result.success) {
+      return { success: true, value: result.value, rawValue: value };
+    }
+    return {
+      success: false,
+      error: TypeValidationError.wrap({ value, cause: result.error }),
+      rawValue: value
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: TypeValidationError.wrap({ value, cause: error }),
+      rawValue: value
+    };
+  }
+}
+__name(safeValidateTypes, "safeValidateTypes");
+async function parseJSON({
+  text,
+  schema
+}) {
+  try {
+    const value = secureJsonParse(text);
+    if (schema == null) {
+      return value;
+    }
+    return validateTypes({ value, schema });
+  } catch (error) {
+    if (JSONParseError.isInstance(error) || TypeValidationError.isInstance(error)) {
+      throw error;
+    }
+    throw new JSONParseError({ text, cause: error });
+  }
+}
+__name(parseJSON, "parseJSON");
+async function safeParseJSON({
+  text,
+  schema
+}) {
+  try {
+    const value = secureJsonParse(text);
+    if (schema == null) {
+      return { success: true, value, rawValue: value };
+    }
+    return await safeValidateTypes({ value, schema });
+  } catch (error) {
+    return {
+      success: false,
+      error: JSONParseError.isInstance(error) ? error : new JSONParseError({ text, cause: error }),
+      rawValue: void 0
+    };
+  }
+}
+__name(safeParseJSON, "safeParseJSON");
+function parseJsonEventStream({
+  stream,
+  schema
+}) {
+  return stream.pipeThrough(new TextDecoderStream()).pipeThrough(new EventSourceParserStream()).pipeThrough(
+    new TransformStream({
+      async transform({ data }, controller) {
+        if (data === "[DONE]") {
+          return;
+        }
+        controller.enqueue(await safeParseJSON({ text: data, schema }));
+      }
+    })
+  );
+}
+__name(parseJsonEventStream, "parseJsonEventStream");
+async function parseProviderOptions({
+  provider,
+  providerOptions,
+  schema
+}) {
+  if ((providerOptions == null ? void 0 : providerOptions[provider]) == null) {
+    return void 0;
+  }
+  const parsedProviderOptions = await safeValidateTypes({
+    value: providerOptions[provider],
+    schema
+  });
+  if (!parsedProviderOptions.success) {
+    throw new InvalidArgumentError({
+      argument: "providerOptions",
+      message: `invalid ${provider} provider options`,
+      cause: parsedProviderOptions.error
+    });
+  }
+  return parsedProviderOptions.value;
+}
+__name(parseProviderOptions, "parseProviderOptions");
+var getOriginalFetch2 = /* @__PURE__ */ __name(() => globalThis.fetch, "getOriginalFetch2");
+var postJsonToApi = /* @__PURE__ */ __name(async ({
+  url,
+  headers,
+  body,
+  failedResponseHandler,
+  successfulResponseHandler,
+  abortSignal,
+  fetch: fetch2
+}) => postToApi({
+  url,
+  headers: {
+    "Content-Type": "application/json",
+    ...headers
+  },
+  body: {
+    content: JSON.stringify(body),
+    values: body
+  },
+  failedResponseHandler,
+  successfulResponseHandler,
+  abortSignal,
+  fetch: fetch2
+}), "postJsonToApi");
+var postToApi = /* @__PURE__ */ __name(async ({
+  url,
+  headers = {},
+  body,
+  successfulResponseHandler,
+  failedResponseHandler,
+  abortSignal,
+  fetch: fetch2 = getOriginalFetch2()
+}) => {
+  try {
+    const response = await fetch2(url, {
+      method: "POST",
+      headers: withUserAgentSuffix(
+        headers,
+        `ai-sdk/provider-utils/${VERSION}`,
+        getRuntimeEnvironmentUserAgent()
+      ),
+      body: body.content,
+      signal: abortSignal
+    });
+    const responseHeaders = extractResponseHeaders(response);
+    if (!response.ok) {
+      let errorInformation;
+      try {
+        errorInformation = await failedResponseHandler({
+          response,
+          url,
+          requestBodyValues: body.values
+        });
+      } catch (error) {
+        if (isAbortError(error) || APICallError.isInstance(error)) {
+          throw error;
+        }
+        throw new APICallError({
+          message: "Failed to process error response",
+          cause: error,
+          statusCode: response.status,
+          url,
+          responseHeaders,
+          requestBodyValues: body.values
+        });
+      }
+      throw errorInformation.value;
+    }
+    try {
+      return await successfulResponseHandler({
+        response,
+        url,
+        requestBodyValues: body.values
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        if (isAbortError(error) || APICallError.isInstance(error)) {
+          throw error;
+        }
+      }
+      throw new APICallError({
+        message: "Failed to process successful response",
+        cause: error,
+        statusCode: response.status,
+        url,
+        responseHeaders,
+        requestBodyValues: body.values
+      });
+    }
+  } catch (error) {
+    throw handleFetchError({ error, url, requestBodyValues: body.values });
+  }
+}, "postToApi");
+function tool(tool2) {
+  return tool2;
+}
+__name(tool, "tool");
+function createProviderToolFactory({
+  id,
+  inputSchema: inputSchema2
+}) {
+  return ({
+    execute,
+    outputSchema,
+    needsApproval,
+    toModelOutput,
+    onInputStart,
+    onInputDelta,
+    onInputAvailable,
+    ...args
+  }) => tool({
+    type: "provider",
+    id,
+    args,
+    inputSchema: inputSchema2,
+    outputSchema,
+    execute,
+    needsApproval,
+    toModelOutput,
+    onInputStart,
+    onInputDelta,
+    onInputAvailable
+  });
+}
+__name(createProviderToolFactory, "createProviderToolFactory");
+function createProviderToolFactoryWithOutputSchema({
+  id,
+  inputSchema: inputSchema2,
+  outputSchema,
+  supportsDeferredResults
+}) {
+  return ({
+    execute,
+    needsApproval,
+    toModelOutput,
+    onInputStart,
+    onInputDelta,
+    onInputAvailable,
+    ...args
+  }) => tool({
+    type: "provider",
+    id,
+    args,
+    inputSchema: inputSchema2,
+    outputSchema,
+    execute,
+    needsApproval,
+    toModelOutput,
+    onInputStart,
+    onInputDelta,
+    onInputAvailable,
+    supportsDeferredResults
+  });
+}
+__name(createProviderToolFactoryWithOutputSchema, "createProviderToolFactoryWithOutputSchema");
+async function resolve(value) {
+  if (typeof value === "function") {
+    value = value();
+  }
+  return Promise.resolve(value);
+}
+__name(resolve, "resolve");
+var createJsonErrorResponseHandler = /* @__PURE__ */ __name(({
+  errorSchema,
+  errorToMessage,
+  isRetryable
+}) => async ({ response, url, requestBodyValues }) => {
+  const responseBody = await response.text();
+  const responseHeaders = extractResponseHeaders(response);
+  if (responseBody.trim() === "") {
+    return {
+      responseHeaders,
+      value: new APICallError({
+        message: response.statusText,
+        url,
+        requestBodyValues,
+        statusCode: response.status,
+        responseHeaders,
+        responseBody,
+        isRetryable: isRetryable == null ? void 0 : isRetryable(response)
+      })
+    };
+  }
+  try {
+    const parsedError = await parseJSON({
+      text: responseBody,
+      schema: errorSchema
+    });
+    return {
+      responseHeaders,
+      value: new APICallError({
+        message: errorToMessage(parsedError),
+        url,
+        requestBodyValues,
+        statusCode: response.status,
+        responseHeaders,
+        responseBody,
+        data: parsedError,
+        isRetryable: isRetryable == null ? void 0 : isRetryable(response, parsedError)
+      })
+    };
+  } catch (parseError) {
+    return {
+      responseHeaders,
+      value: new APICallError({
+        message: response.statusText,
+        url,
+        requestBodyValues,
+        statusCode: response.status,
+        responseHeaders,
+        responseBody,
+        isRetryable: isRetryable == null ? void 0 : isRetryable(response)
+      })
+    };
+  }
+}, "createJsonErrorResponseHandler");
+var createEventSourceResponseHandler = /* @__PURE__ */ __name((chunkSchema2) => async ({ response }) => {
+  const responseHeaders = extractResponseHeaders(response);
+  if (response.body == null) {
+    throw new EmptyResponseBodyError({});
+  }
+  return {
+    responseHeaders,
+    value: parseJsonEventStream({
+      stream: response.body,
+      schema: chunkSchema2
+    })
+  };
+}, "createEventSourceResponseHandler");
+var createJsonResponseHandler = /* @__PURE__ */ __name((responseSchema2) => async ({ response, url, requestBodyValues }) => {
+  const responseBody = await response.text();
+  const parsedResult = await safeParseJSON({
+    text: responseBody,
+    schema: responseSchema2
+  });
+  const responseHeaders = extractResponseHeaders(response);
+  if (!parsedResult.success) {
+    throw new APICallError({
+      message: "Invalid JSON response",
+      cause: parsedResult.error,
+      statusCode: response.status,
+      responseHeaders,
+      responseBody,
+      url,
+      requestBodyValues
+    });
+  }
+  return {
+    responseHeaders,
+    value: parsedResult.value,
+    rawValue: parsedResult.rawValue
+  };
+}, "createJsonResponseHandler");
+function withoutTrailingSlash(url) {
+  return url == null ? void 0 : url.replace(/\/$/, "");
+}
+__name(withoutTrailingSlash, "withoutTrailingSlash");
+
+// node_modules/@ai-sdk/google/dist/index.mjs
+var VERSION2 = true ? "3.0.0" : "0.0.0-test";
+var googleErrorDataSchema = lazySchema(
+  () => zodSchema(
+    external_exports.object({
+      error: external_exports.object({
+        code: external_exports.number().nullable(),
+        message: external_exports.string(),
+        status: external_exports.string()
+      })
+    })
+  )
+);
+var googleFailedResponseHandler = createJsonErrorResponseHandler({
+  errorSchema: googleErrorDataSchema,
+  errorToMessage: /* @__PURE__ */ __name((data) => data.error.message, "errorToMessage")
+});
+var googleGenerativeAIEmbeddingProviderOptions = lazySchema(
+  () => zodSchema(
+    external_exports.object({
+      /**
+       * Optional. Optional reduced dimension for the output embedding.
+       * If set, excessive values in the output embedding are truncated from the end.
+       */
+      outputDimensionality: external_exports.number().optional(),
+      /**
+       * Optional. Specifies the task type for generating embeddings.
+       * Supported task types:
+       * - SEMANTIC_SIMILARITY: Optimized for text similarity.
+       * - CLASSIFICATION: Optimized for text classification.
+       * - CLUSTERING: Optimized for clustering texts based on similarity.
+       * - RETRIEVAL_DOCUMENT: Optimized for document retrieval.
+       * - RETRIEVAL_QUERY: Optimized for query-based retrieval.
+       * - QUESTION_ANSWERING: Optimized for answering questions.
+       * - FACT_VERIFICATION: Optimized for verifying factual information.
+       * - CODE_RETRIEVAL_QUERY: Optimized for retrieving code blocks based on natural language queries.
+       */
+      taskType: external_exports.enum([
+        "SEMANTIC_SIMILARITY",
+        "CLASSIFICATION",
+        "CLUSTERING",
+        "RETRIEVAL_DOCUMENT",
+        "RETRIEVAL_QUERY",
+        "QUESTION_ANSWERING",
+        "FACT_VERIFICATION",
+        "CODE_RETRIEVAL_QUERY"
+      ]).optional()
+    })
+  )
+);
+var GoogleGenerativeAIEmbeddingModel = class {
+  static {
+    __name(this, "GoogleGenerativeAIEmbeddingModel");
+  }
+  constructor(modelId, config) {
+    this.specificationVersion = "v3";
+    this.maxEmbeddingsPerCall = 2048;
+    this.supportsParallelCalls = true;
+    this.modelId = modelId;
+    this.config = config;
+  }
+  get provider() {
+    return this.config.provider;
+  }
+  async doEmbed({
+    values,
+    headers,
+    abortSignal,
+    providerOptions
+  }) {
+    const googleOptions = await parseProviderOptions({
+      provider: "google",
+      providerOptions,
+      schema: googleGenerativeAIEmbeddingProviderOptions
+    });
+    if (values.length > this.maxEmbeddingsPerCall) {
+      throw new TooManyEmbeddingValuesForCallError({
+        provider: this.provider,
+        modelId: this.modelId,
+        maxEmbeddingsPerCall: this.maxEmbeddingsPerCall,
+        values
+      });
+    }
+    const mergedHeaders = combineHeaders(
+      await resolve(this.config.headers),
+      headers
+    );
+    if (values.length === 1) {
+      const {
+        responseHeaders: responseHeaders2,
+        value: response2,
+        rawValue: rawValue2
+      } = await postJsonToApi({
+        url: `${this.config.baseURL}/models/${this.modelId}:embedContent`,
+        headers: mergedHeaders,
+        body: {
+          model: `models/${this.modelId}`,
+          content: {
+            parts: [{ text: values[0] }]
+          },
+          outputDimensionality: googleOptions == null ? void 0 : googleOptions.outputDimensionality,
+          taskType: googleOptions == null ? void 0 : googleOptions.taskType
+        },
+        failedResponseHandler: googleFailedResponseHandler,
+        successfulResponseHandler: createJsonResponseHandler(
+          googleGenerativeAISingleEmbeddingResponseSchema
+        ),
+        abortSignal,
+        fetch: this.config.fetch
+      });
+      return {
+        warnings: [],
+        embeddings: [response2.embedding.values],
+        usage: void 0,
+        response: { headers: responseHeaders2, body: rawValue2 }
+      };
+    }
+    const {
+      responseHeaders,
+      value: response,
+      rawValue
+    } = await postJsonToApi({
+      url: `${this.config.baseURL}/models/${this.modelId}:batchEmbedContents`,
+      headers: mergedHeaders,
+      body: {
+        requests: values.map((value) => ({
+          model: `models/${this.modelId}`,
+          content: { role: "user", parts: [{ text: value }] },
+          outputDimensionality: googleOptions == null ? void 0 : googleOptions.outputDimensionality,
+          taskType: googleOptions == null ? void 0 : googleOptions.taskType
+        }))
+      },
+      failedResponseHandler: googleFailedResponseHandler,
+      successfulResponseHandler: createJsonResponseHandler(
+        googleGenerativeAITextEmbeddingResponseSchema
+      ),
+      abortSignal,
+      fetch: this.config.fetch
+    });
+    return {
+      warnings: [],
+      embeddings: response.embeddings.map((item) => item.values),
+      usage: void 0,
+      response: { headers: responseHeaders, body: rawValue }
+    };
+  }
+};
+var googleGenerativeAITextEmbeddingResponseSchema = lazySchema(
+  () => zodSchema(
+    external_exports.object({
+      embeddings: external_exports.array(external_exports.object({ values: external_exports.array(external_exports.number()) }))
+    })
+  )
+);
+var googleGenerativeAISingleEmbeddingResponseSchema = lazySchema(
+  () => zodSchema(
+    external_exports.object({
+      embedding: external_exports.object({ values: external_exports.array(external_exports.number()) })
+    })
+  )
+);
+function convertGoogleGenerativeAIUsage(usage) {
+  var _a16, _b16, _c, _d;
+  if (usage == null) {
+    return {
+      inputTokens: {
+        total: void 0,
+        noCache: void 0,
+        cacheRead: void 0,
+        cacheWrite: void 0
+      },
+      outputTokens: {
+        total: void 0,
+        text: void 0,
+        reasoning: void 0
+      },
+      raw: void 0
+    };
+  }
+  const promptTokens = (_a16 = usage.promptTokenCount) != null ? _a16 : 0;
+  const candidatesTokens = (_b16 = usage.candidatesTokenCount) != null ? _b16 : 0;
+  const cachedContentTokens = (_c = usage.cachedContentTokenCount) != null ? _c : 0;
+  const thoughtsTokens = (_d = usage.thoughtsTokenCount) != null ? _d : 0;
+  return {
+    inputTokens: {
+      total: promptTokens,
+      noCache: promptTokens - cachedContentTokens,
+      cacheRead: cachedContentTokens,
+      cacheWrite: void 0
+    },
+    outputTokens: {
+      total: candidatesTokens + thoughtsTokens,
+      text: candidatesTokens,
+      reasoning: thoughtsTokens
+    },
+    raw: usage
+  };
+}
+__name(convertGoogleGenerativeAIUsage, "convertGoogleGenerativeAIUsage");
+function convertJSONSchemaToOpenAPISchema(jsonSchema2, isRoot = true) {
+  if (jsonSchema2 == null) {
+    return void 0;
+  }
+  if (isEmptyObjectSchema(jsonSchema2)) {
+    if (isRoot) {
+      return void 0;
+    }
+    if (typeof jsonSchema2 === "object" && jsonSchema2.description) {
+      return { type: "object", description: jsonSchema2.description };
+    }
+    return { type: "object" };
+  }
+  if (typeof jsonSchema2 === "boolean") {
+    return { type: "boolean", properties: {} };
+  }
+  const {
+    type,
+    description,
+    required,
+    properties,
+    items,
+    allOf,
+    anyOf,
+    oneOf,
+    format,
+    const: constValue,
+    minLength,
+    enum: enumValues
+  } = jsonSchema2;
+  const result = {};
+  if (description) result.description = description;
+  if (required) result.required = required;
+  if (format) result.format = format;
+  if (constValue !== void 0) {
+    result.enum = [constValue];
+  }
+  if (type) {
+    if (Array.isArray(type)) {
+      const hasNull = type.includes("null");
+      const nonNullTypes = type.filter((t) => t !== "null");
+      if (nonNullTypes.length === 0) {
+        result.type = "null";
+      } else {
+        result.anyOf = nonNullTypes.map((t) => ({ type: t }));
+        if (hasNull) {
+          result.nullable = true;
+        }
+      }
+    } else {
+      result.type = type;
+    }
+  }
+  if (enumValues !== void 0) {
+    result.enum = enumValues;
+  }
+  if (properties != null) {
+    result.properties = Object.entries(properties).reduce(
+      (acc, [key, value]) => {
+        acc[key] = convertJSONSchemaToOpenAPISchema(value, false);
+        return acc;
+      },
+      {}
+    );
+  }
+  if (items) {
+    result.items = Array.isArray(items) ? items.map((item) => convertJSONSchemaToOpenAPISchema(item, false)) : convertJSONSchemaToOpenAPISchema(items, false);
+  }
+  if (allOf) {
+    result.allOf = allOf.map(
+      (item) => convertJSONSchemaToOpenAPISchema(item, false)
+    );
+  }
+  if (anyOf) {
+    if (anyOf.some(
+      (schema) => typeof schema === "object" && (schema == null ? void 0 : schema.type) === "null"
+    )) {
+      const nonNullSchemas = anyOf.filter(
+        (schema) => !(typeof schema === "object" && (schema == null ? void 0 : schema.type) === "null")
+      );
+      if (nonNullSchemas.length === 1) {
+        const converted = convertJSONSchemaToOpenAPISchema(
+          nonNullSchemas[0],
+          false
+        );
+        if (typeof converted === "object") {
+          result.nullable = true;
+          Object.assign(result, converted);
+        }
+      } else {
+        result.anyOf = nonNullSchemas.map(
+          (item) => convertJSONSchemaToOpenAPISchema(item, false)
+        );
+        result.nullable = true;
+      }
+    } else {
+      result.anyOf = anyOf.map(
+        (item) => convertJSONSchemaToOpenAPISchema(item, false)
+      );
+    }
+  }
+  if (oneOf) {
+    result.oneOf = oneOf.map(
+      (item) => convertJSONSchemaToOpenAPISchema(item, false)
+    );
+  }
+  if (minLength !== void 0) {
+    result.minLength = minLength;
+  }
+  return result;
+}
+__name(convertJSONSchemaToOpenAPISchema, "convertJSONSchemaToOpenAPISchema");
+function isEmptyObjectSchema(jsonSchema2) {
+  return jsonSchema2 != null && typeof jsonSchema2 === "object" && jsonSchema2.type === "object" && (jsonSchema2.properties == null || Object.keys(jsonSchema2.properties).length === 0) && !jsonSchema2.additionalProperties;
+}
+__name(isEmptyObjectSchema, "isEmptyObjectSchema");
+function convertToGoogleGenerativeAIMessages(prompt, options) {
+  var _a16, _b16, _c;
+  const systemInstructionParts = [];
+  const contents = [];
+  let systemMessagesAllowed = true;
+  const isGemmaModel = (_a16 = options == null ? void 0 : options.isGemmaModel) != null ? _a16 : false;
+  const providerOptionsName = (_b16 = options == null ? void 0 : options.providerOptionsName) != null ? _b16 : "google";
+  for (const { role, content } of prompt) {
+    switch (role) {
+      case "system": {
+        if (!systemMessagesAllowed) {
+          throw new UnsupportedFunctionalityError({
+            functionality: "system messages are only supported at the beginning of the conversation"
+          });
+        }
+        systemInstructionParts.push({ text: content });
+        break;
+      }
+      case "user": {
+        systemMessagesAllowed = false;
+        const parts = [];
+        for (const part of content) {
+          switch (part.type) {
+            case "text": {
+              parts.push({ text: part.text });
+              break;
+            }
+            case "file": {
+              const mediaType = part.mediaType === "image/*" ? "image/jpeg" : part.mediaType;
+              parts.push(
+                part.data instanceof URL ? {
+                  fileData: {
+                    mimeType: mediaType,
+                    fileUri: part.data.toString()
+                  }
+                } : {
+                  inlineData: {
+                    mimeType: mediaType,
+                    data: convertToBase64(part.data)
+                  }
+                }
+              );
+              break;
+            }
+          }
+        }
+        contents.push({ role: "user", parts });
+        break;
+      }
+      case "assistant": {
+        systemMessagesAllowed = false;
+        contents.push({
+          role: "model",
+          parts: content.map((part) => {
+            var _a22;
+            const providerOpts = (_a22 = part.providerOptions) == null ? void 0 : _a22[providerOptionsName];
+            const thoughtSignature = (providerOpts == null ? void 0 : providerOpts.thoughtSignature) != null ? String(providerOpts.thoughtSignature) : void 0;
+            switch (part.type) {
+              case "text": {
+                return part.text.length === 0 ? void 0 : {
+                  text: part.text,
+                  thoughtSignature
+                };
+              }
+              case "reasoning": {
+                return part.text.length === 0 ? void 0 : {
+                  text: part.text,
+                  thought: true,
+                  thoughtSignature
+                };
+              }
+              case "file": {
+                if (part.data instanceof URL) {
+                  throw new UnsupportedFunctionalityError({
+                    functionality: "File data URLs in assistant messages are not supported"
+                  });
+                }
+                return {
+                  inlineData: {
+                    mimeType: part.mediaType,
+                    data: convertToBase64(part.data)
+                  },
+                  thoughtSignature
+                };
+              }
+              case "tool-call": {
+                return {
+                  functionCall: {
+                    name: part.toolName,
+                    args: part.input
+                  },
+                  thoughtSignature
+                };
+              }
+            }
+          }).filter((part) => part !== void 0)
+        });
+        break;
+      }
+      case "tool": {
+        systemMessagesAllowed = false;
+        const parts = [];
+        for (const part of content) {
+          if (part.type === "tool-approval-response") {
+            continue;
+          }
+          const output = part.output;
+          if (output.type === "content") {
+            for (const contentPart of output.value) {
+              switch (contentPart.type) {
+                case "text":
+                  parts.push({
+                    functionResponse: {
+                      name: part.toolName,
+                      response: {
+                        name: part.toolName,
+                        content: contentPart.text
+                      }
+                    }
+                  });
+                  break;
+                case "image-data":
+                  parts.push(
+                    {
+                      inlineData: {
+                        mimeType: contentPart.mediaType,
+                        data: contentPart.data
+                      }
+                    },
+                    {
+                      text: "Tool executed successfully and returned this image as a response"
+                    }
+                  );
+                  break;
+                default:
+                  parts.push({ text: JSON.stringify(contentPart) });
+                  break;
+              }
+            }
+          } else {
+            parts.push({
+              functionResponse: {
+                name: part.toolName,
+                response: {
+                  name: part.toolName,
+                  content: output.type === "execution-denied" ? (_c = output.reason) != null ? _c : "Tool execution denied." : output.value
+                }
+              }
+            });
+          }
+        }
+        contents.push({
+          role: "user",
+          parts
+        });
+        break;
+      }
+    }
+  }
+  if (isGemmaModel && systemInstructionParts.length > 0 && contents.length > 0 && contents[0].role === "user") {
+    const systemText = systemInstructionParts.map((part) => part.text).join("\n\n");
+    contents[0].parts.unshift({ text: systemText + "\n\n" });
+  }
+  return {
+    systemInstruction: systemInstructionParts.length > 0 && !isGemmaModel ? { parts: systemInstructionParts } : void 0,
+    contents
+  };
+}
+__name(convertToGoogleGenerativeAIMessages, "convertToGoogleGenerativeAIMessages");
+function getModelPath(modelId) {
+  return modelId.includes("/") ? modelId : `models/${modelId}`;
+}
+__name(getModelPath, "getModelPath");
+var googleGenerativeAIProviderOptions = lazySchema(
+  () => zodSchema(
+    external_exports.object({
+      responseModalities: external_exports.array(external_exports.enum(["TEXT", "IMAGE"])).optional(),
+      thinkingConfig: external_exports.object({
+        thinkingBudget: external_exports.number().optional(),
+        includeThoughts: external_exports.boolean().optional(),
+        // https://ai.google.dev/gemini-api/docs/gemini-3?thinking=high#thinking_level
+        thinkingLevel: external_exports.enum(["minimal", "low", "medium", "high"]).optional()
+      }).optional(),
+      /**
+       * Optional.
+       * The name of the cached content used as context to serve the prediction.
+       * Format: cachedContents/{cachedContent}
+       */
+      cachedContent: external_exports.string().optional(),
+      /**
+       * Optional. Enable structured output. Default is true.
+       *
+       * This is useful when the JSON Schema contains elements that are
+       * not supported by the OpenAPI schema version that
+       * Google Generative AI uses. You can use this to disable
+       * structured outputs if you need to.
+       */
+      structuredOutputs: external_exports.boolean().optional(),
+      /**
+       * Optional. A list of unique safety settings for blocking unsafe content.
+       */
+      safetySettings: external_exports.array(
+        external_exports.object({
+          category: external_exports.enum([
+            "HARM_CATEGORY_UNSPECIFIED",
+            "HARM_CATEGORY_HATE_SPEECH",
+            "HARM_CATEGORY_DANGEROUS_CONTENT",
+            "HARM_CATEGORY_HARASSMENT",
+            "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            "HARM_CATEGORY_CIVIC_INTEGRITY"
+          ]),
+          threshold: external_exports.enum([
+            "HARM_BLOCK_THRESHOLD_UNSPECIFIED",
+            "BLOCK_LOW_AND_ABOVE",
+            "BLOCK_MEDIUM_AND_ABOVE",
+            "BLOCK_ONLY_HIGH",
+            "BLOCK_NONE",
+            "OFF"
+          ])
+        })
+      ).optional(),
+      threshold: external_exports.enum([
+        "HARM_BLOCK_THRESHOLD_UNSPECIFIED",
+        "BLOCK_LOW_AND_ABOVE",
+        "BLOCK_MEDIUM_AND_ABOVE",
+        "BLOCK_ONLY_HIGH",
+        "BLOCK_NONE",
+        "OFF"
+      ]).optional(),
+      /**
+       * Optional. Enables timestamp understanding for audio-only files.
+       *
+       * https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/audio-understanding
+       */
+      audioTimestamp: external_exports.boolean().optional(),
+      /**
+       * Optional. Defines labels used in billing reports. Available on Vertex AI only.
+       *
+       * https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/add-labels-to-api-calls
+       */
+      labels: external_exports.record(external_exports.string(), external_exports.string()).optional(),
+      /**
+       * Optional. If specified, the media resolution specified will be used.
+       *
+       * https://ai.google.dev/api/generate-content#MediaResolution
+       */
+      mediaResolution: external_exports.enum([
+        "MEDIA_RESOLUTION_UNSPECIFIED",
+        "MEDIA_RESOLUTION_LOW",
+        "MEDIA_RESOLUTION_MEDIUM",
+        "MEDIA_RESOLUTION_HIGH"
+      ]).optional(),
+      /**
+       * Optional. Configures the image generation aspect ratio for Gemini models.
+       *
+       * https://ai.google.dev/gemini-api/docs/image-generation#aspect_ratios
+       */
+      imageConfig: external_exports.object({
+        aspectRatio: external_exports.enum([
+          "1:1",
+          "2:3",
+          "3:2",
+          "3:4",
+          "4:3",
+          "4:5",
+          "5:4",
+          "9:16",
+          "16:9",
+          "21:9"
+        ]).optional(),
+        imageSize: external_exports.enum(["1K", "2K", "4K"]).optional()
+      }).optional(),
+      /**
+       * Optional. Configuration for grounding retrieval.
+       * Used to provide location context for Google Maps and Google Search grounding.
+       *
+       * https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-with-google-maps
+       */
+      retrievalConfig: external_exports.object({
+        latLng: external_exports.object({
+          latitude: external_exports.number(),
+          longitude: external_exports.number()
+        }).optional()
+      }).optional()
+    })
+  )
+);
+function prepareTools({
+  tools,
+  toolChoice,
+  modelId
+}) {
+  var _a16;
+  tools = (tools == null ? void 0 : tools.length) ? tools : void 0;
+  const toolWarnings = [];
+  const isLatest = [
+    "gemini-flash-latest",
+    "gemini-flash-lite-latest",
+    "gemini-pro-latest"
+  ].some((id) => id === modelId);
+  const isGemini2orNewer = modelId.includes("gemini-2") || modelId.includes("gemini-3") || isLatest;
+  const supportsDynamicRetrieval = modelId.includes("gemini-1.5-flash") && !modelId.includes("-8b");
+  const supportsFileSearch = modelId.includes("gemini-2.5");
+  if (tools == null) {
+    return { tools: void 0, toolConfig: void 0, toolWarnings };
+  }
+  const hasFunctionTools = tools.some((tool2) => tool2.type === "function");
+  const hasProviderTools = tools.some((tool2) => tool2.type === "provider");
+  if (hasFunctionTools && hasProviderTools) {
+    toolWarnings.push({
+      type: "unsupported",
+      feature: `combination of function and provider-defined tools`
+    });
+  }
+  if (hasProviderTools) {
+    const googleTools2 = [];
+    const ProviderTools = tools.filter((tool2) => tool2.type === "provider");
+    ProviderTools.forEach((tool2) => {
+      switch (tool2.id) {
+        case "google.google_search":
+          if (isGemini2orNewer) {
+            googleTools2.push({ googleSearch: {} });
+          } else if (supportsDynamicRetrieval) {
+            googleTools2.push({
+              googleSearchRetrieval: {
+                dynamicRetrievalConfig: {
+                  mode: tool2.args.mode,
+                  dynamicThreshold: tool2.args.dynamicThreshold
+                }
+              }
+            });
+          } else {
+            googleTools2.push({ googleSearchRetrieval: {} });
+          }
+          break;
+        case "google.enterprise_web_search":
+          if (isGemini2orNewer) {
+            googleTools2.push({ enterpriseWebSearch: {} });
+          } else {
+            toolWarnings.push({
+              type: "unsupported",
+              feature: `provider-defined tool ${tool2.id}`,
+              details: "Enterprise Web Search requires Gemini 2.0 or newer."
+            });
+          }
+          break;
+        case "google.url_context":
+          if (isGemini2orNewer) {
+            googleTools2.push({ urlContext: {} });
+          } else {
+            toolWarnings.push({
+              type: "unsupported",
+              feature: `provider-defined tool ${tool2.id}`,
+              details: "The URL context tool is not supported with other Gemini models than Gemini 2."
+            });
+          }
+          break;
+        case "google.code_execution":
+          if (isGemini2orNewer) {
+            googleTools2.push({ codeExecution: {} });
+          } else {
+            toolWarnings.push({
+              type: "unsupported",
+              feature: `provider-defined tool ${tool2.id}`,
+              details: "The code execution tools is not supported with other Gemini models than Gemini 2."
+            });
+          }
+          break;
+        case "google.file_search":
+          if (supportsFileSearch) {
+            googleTools2.push({ fileSearch: { ...tool2.args } });
+          } else {
+            toolWarnings.push({
+              type: "unsupported",
+              feature: `provider-defined tool ${tool2.id}`,
+              details: "The file search tool is only supported with Gemini 2.5 models."
+            });
+          }
+          break;
+        case "google.vertex_rag_store":
+          if (isGemini2orNewer) {
+            googleTools2.push({
+              retrieval: {
+                vertex_rag_store: {
+                  rag_resources: {
+                    rag_corpus: tool2.args.ragCorpus
+                  },
+                  similarity_top_k: tool2.args.topK
+                }
+              }
+            });
+          } else {
+            toolWarnings.push({
+              type: "unsupported",
+              feature: `provider-defined tool ${tool2.id}`,
+              details: "The RAG store tool is not supported with other Gemini models than Gemini 2."
+            });
+          }
+          break;
+        case "google.google_maps":
+          if (isGemini2orNewer) {
+            googleTools2.push({ googleMaps: {} });
+          } else {
+            toolWarnings.push({
+              type: "unsupported",
+              feature: `provider-defined tool ${tool2.id}`,
+              details: "The Google Maps grounding tool is not supported with Gemini models other than Gemini 2 or newer."
+            });
+          }
+          break;
+        default:
+          toolWarnings.push({
+            type: "unsupported",
+            feature: `provider-defined tool ${tool2.id}`
+          });
+          break;
+      }
+    });
+    return {
+      tools: googleTools2.length > 0 ? googleTools2 : void 0,
+      toolConfig: void 0,
+      toolWarnings
+    };
+  }
+  const functionDeclarations = [];
+  for (const tool2 of tools) {
+    switch (tool2.type) {
+      case "function":
+        functionDeclarations.push({
+          name: tool2.name,
+          description: (_a16 = tool2.description) != null ? _a16 : "",
+          parameters: convertJSONSchemaToOpenAPISchema(tool2.inputSchema)
+        });
+        break;
+      default:
+        toolWarnings.push({
+          type: "unsupported",
+          feature: `function tool ${tool2.name}`
+        });
+        break;
+    }
+  }
+  if (toolChoice == null) {
+    return {
+      tools: [{ functionDeclarations }],
+      toolConfig: void 0,
+      toolWarnings
+    };
+  }
+  const type = toolChoice.type;
+  switch (type) {
+    case "auto":
+      return {
+        tools: [{ functionDeclarations }],
+        toolConfig: { functionCallingConfig: { mode: "AUTO" } },
+        toolWarnings
+      };
+    case "none":
+      return {
+        tools: [{ functionDeclarations }],
+        toolConfig: { functionCallingConfig: { mode: "NONE" } },
+        toolWarnings
+      };
+    case "required":
+      return {
+        tools: [{ functionDeclarations }],
+        toolConfig: { functionCallingConfig: { mode: "ANY" } },
+        toolWarnings
+      };
+    case "tool":
+      return {
+        tools: [{ functionDeclarations }],
+        toolConfig: {
+          functionCallingConfig: {
+            mode: "ANY",
+            allowedFunctionNames: [toolChoice.toolName]
+          }
+        },
+        toolWarnings
+      };
+    default: {
+      const _exhaustiveCheck = type;
+      throw new UnsupportedFunctionalityError({
+        functionality: `tool choice type: ${_exhaustiveCheck}`
+      });
+    }
+  }
+}
+__name(prepareTools, "prepareTools");
+function mapGoogleGenerativeAIFinishReason({
+  finishReason,
+  hasToolCalls
+}) {
+  switch (finishReason) {
+    case "STOP":
+      return hasToolCalls ? "tool-calls" : "stop";
+    case "MAX_TOKENS":
+      return "length";
+    case "IMAGE_SAFETY":
+    case "RECITATION":
+    case "SAFETY":
+    case "BLOCKLIST":
+    case "PROHIBITED_CONTENT":
+    case "SPII":
+      return "content-filter";
+    case "MALFORMED_FUNCTION_CALL":
+      return "error";
+    case "FINISH_REASON_UNSPECIFIED":
+    case "OTHER":
+    default:
+      return "other";
+  }
+}
+__name(mapGoogleGenerativeAIFinishReason, "mapGoogleGenerativeAIFinishReason");
+var GoogleGenerativeAILanguageModel = class {
+  static {
+    __name(this, "GoogleGenerativeAILanguageModel");
+  }
+  constructor(modelId, config) {
+    this.specificationVersion = "v3";
+    var _a16;
+    this.modelId = modelId;
+    this.config = config;
+    this.generateId = (_a16 = config.generateId) != null ? _a16 : generateId;
+  }
+  get provider() {
+    return this.config.provider;
+  }
+  get supportedUrls() {
+    var _a16, _b16, _c;
+    return (_c = (_b16 = (_a16 = this.config).supportedUrls) == null ? void 0 : _b16.call(_a16)) != null ? _c : {};
+  }
+  async getArgs({
+    prompt,
+    maxOutputTokens,
+    temperature,
+    topP,
+    topK,
+    frequencyPenalty,
+    presencePenalty,
+    stopSequences,
+    responseFormat,
+    seed,
+    tools,
+    toolChoice,
+    providerOptions
+  }) {
+    var _a16;
+    const warnings = [];
+    const providerOptionsName = this.config.provider.includes("vertex") ? "vertex" : "google";
+    let googleOptions = await parseProviderOptions({
+      provider: providerOptionsName,
+      providerOptions,
+      schema: googleGenerativeAIProviderOptions
+    });
+    if (googleOptions == null && providerOptionsName !== "google") {
+      googleOptions = await parseProviderOptions({
+        provider: "google",
+        providerOptions,
+        schema: googleGenerativeAIProviderOptions
+      });
+    }
+    if ((tools == null ? void 0 : tools.some(
+      (tool2) => tool2.type === "provider" && tool2.id === "google.vertex_rag_store"
+    )) && !this.config.provider.startsWith("google.vertex.")) {
+      warnings.push({
+        type: "other",
+        message: `The 'vertex_rag_store' tool is only supported with the Google Vertex provider and might not be supported or could behave unexpectedly with the current Google provider (${this.config.provider}).`
+      });
+    }
+    const isGemmaModel = this.modelId.toLowerCase().startsWith("gemma-");
+    const { contents, systemInstruction } = convertToGoogleGenerativeAIMessages(
+      prompt,
+      { isGemmaModel, providerOptionsName }
+    );
+    const {
+      tools: googleTools2,
+      toolConfig: googleToolConfig,
+      toolWarnings
+    } = prepareTools({
+      tools,
+      toolChoice,
+      modelId: this.modelId
+    });
+    return {
+      args: {
+        generationConfig: {
+          // standardized settings:
+          maxOutputTokens,
+          temperature,
+          topK,
+          topP,
+          frequencyPenalty,
+          presencePenalty,
+          stopSequences,
+          seed,
+          // response format:
+          responseMimeType: (responseFormat == null ? void 0 : responseFormat.type) === "json" ? "application/json" : void 0,
+          responseSchema: (responseFormat == null ? void 0 : responseFormat.type) === "json" && responseFormat.schema != null && // Google GenAI does not support all OpenAPI Schema features,
+          // so this is needed as an escape hatch:
+          // TODO convert into provider option
+          ((_a16 = googleOptions == null ? void 0 : googleOptions.structuredOutputs) != null ? _a16 : true) ? convertJSONSchemaToOpenAPISchema(responseFormat.schema) : void 0,
+          ...(googleOptions == null ? void 0 : googleOptions.audioTimestamp) && {
+            audioTimestamp: googleOptions.audioTimestamp
+          },
+          // provider options:
+          responseModalities: googleOptions == null ? void 0 : googleOptions.responseModalities,
+          thinkingConfig: googleOptions == null ? void 0 : googleOptions.thinkingConfig,
+          ...(googleOptions == null ? void 0 : googleOptions.mediaResolution) && {
+            mediaResolution: googleOptions.mediaResolution
+          },
+          ...(googleOptions == null ? void 0 : googleOptions.imageConfig) && {
+            imageConfig: googleOptions.imageConfig
+          }
+        },
+        contents,
+        systemInstruction: isGemmaModel ? void 0 : systemInstruction,
+        safetySettings: googleOptions == null ? void 0 : googleOptions.safetySettings,
+        tools: googleTools2,
+        toolConfig: (googleOptions == null ? void 0 : googleOptions.retrievalConfig) ? {
+          ...googleToolConfig,
+          retrievalConfig: googleOptions.retrievalConfig
+        } : googleToolConfig,
+        cachedContent: googleOptions == null ? void 0 : googleOptions.cachedContent,
+        labels: googleOptions == null ? void 0 : googleOptions.labels
+      },
+      warnings: [...warnings, ...toolWarnings],
+      providerOptionsName
+    };
+  }
+  async doGenerate(options) {
+    var _a16, _b16, _c, _d, _e, _f, _g, _h, _i;
+    const { args, warnings, providerOptionsName } = await this.getArgs(options);
+    const mergedHeaders = combineHeaders(
+      await resolve(this.config.headers),
+      options.headers
+    );
+    const {
+      responseHeaders,
+      value: response,
+      rawValue: rawResponse
+    } = await postJsonToApi({
+      url: `${this.config.baseURL}/${getModelPath(
+        this.modelId
+      )}:generateContent`,
+      headers: mergedHeaders,
+      body: args,
+      failedResponseHandler: googleFailedResponseHandler,
+      successfulResponseHandler: createJsonResponseHandler(responseSchema),
+      abortSignal: options.abortSignal,
+      fetch: this.config.fetch
+    });
+    const candidate = response.candidates[0];
+    const content = [];
+    const parts = (_b16 = (_a16 = candidate.content) == null ? void 0 : _a16.parts) != null ? _b16 : [];
+    const usageMetadata = response.usageMetadata;
+    let lastCodeExecutionToolCallId;
+    for (const part of parts) {
+      if ("executableCode" in part && ((_c = part.executableCode) == null ? void 0 : _c.code)) {
+        const toolCallId = this.config.generateId();
+        lastCodeExecutionToolCallId = toolCallId;
+        content.push({
+          type: "tool-call",
+          toolCallId,
+          toolName: "code_execution",
+          input: JSON.stringify(part.executableCode),
+          providerExecuted: true
+        });
+      } else if ("codeExecutionResult" in part && part.codeExecutionResult) {
+        content.push({
+          type: "tool-result",
+          // Assumes a result directly follows its corresponding call part.
+          toolCallId: lastCodeExecutionToolCallId,
+          toolName: "code_execution",
+          result: {
+            outcome: part.codeExecutionResult.outcome,
+            output: part.codeExecutionResult.output
+          }
+        });
+        lastCodeExecutionToolCallId = void 0;
+      } else if ("text" in part && part.text != null && part.text.length > 0) {
+        content.push({
+          type: part.thought === true ? "reasoning" : "text",
+          text: part.text,
+          providerMetadata: part.thoughtSignature ? {
+            [providerOptionsName]: {
+              thoughtSignature: part.thoughtSignature
+            }
+          } : void 0
+        });
+      } else if ("functionCall" in part) {
+        content.push({
+          type: "tool-call",
+          toolCallId: this.config.generateId(),
+          toolName: part.functionCall.name,
+          input: JSON.stringify(part.functionCall.args),
+          providerMetadata: part.thoughtSignature ? {
+            [providerOptionsName]: {
+              thoughtSignature: part.thoughtSignature
+            }
+          } : void 0
+        });
+      } else if ("inlineData" in part) {
+        content.push({
+          type: "file",
+          data: part.inlineData.data,
+          mediaType: part.inlineData.mimeType,
+          providerMetadata: part.thoughtSignature ? {
+            [providerOptionsName]: {
+              thoughtSignature: part.thoughtSignature
+            }
+          } : void 0
+        });
+      }
+    }
+    const sources = (_d = extractSources({
+      groundingMetadata: candidate.groundingMetadata,
+      generateId: this.config.generateId
+    })) != null ? _d : [];
+    for (const source of sources) {
+      content.push(source);
+    }
+    return {
+      content,
+      finishReason: {
+        unified: mapGoogleGenerativeAIFinishReason({
+          finishReason: candidate.finishReason,
+          hasToolCalls: content.some((part) => part.type === "tool-call")
+        }),
+        raw: (_e = candidate.finishReason) != null ? _e : void 0
+      },
+      usage: convertGoogleGenerativeAIUsage(usageMetadata),
+      warnings,
+      providerMetadata: {
+        [providerOptionsName]: {
+          promptFeedback: (_f = response.promptFeedback) != null ? _f : null,
+          groundingMetadata: (_g = candidate.groundingMetadata) != null ? _g : null,
+          urlContextMetadata: (_h = candidate.urlContextMetadata) != null ? _h : null,
+          safetyRatings: (_i = candidate.safetyRatings) != null ? _i : null,
+          usageMetadata: usageMetadata != null ? usageMetadata : null
+        }
+      },
+      request: { body: args },
+      response: {
+        // TODO timestamp, model id, id
+        headers: responseHeaders,
+        body: rawResponse
+      }
+    };
+  }
+  async doStream(options) {
+    const { args, warnings, providerOptionsName } = await this.getArgs(options);
+    const headers = combineHeaders(
+      await resolve(this.config.headers),
+      options.headers
+    );
+    const { responseHeaders, value: response } = await postJsonToApi({
+      url: `${this.config.baseURL}/${getModelPath(
+        this.modelId
+      )}:streamGenerateContent?alt=sse`,
+      headers,
+      body: args,
+      failedResponseHandler: googleFailedResponseHandler,
+      successfulResponseHandler: createEventSourceResponseHandler(chunkSchema),
+      abortSignal: options.abortSignal,
+      fetch: this.config.fetch
+    });
+    let finishReason = {
+      unified: "other",
+      raw: void 0
+    };
+    let usage = void 0;
+    let providerMetadata = void 0;
+    const generateId3 = this.config.generateId;
+    let hasToolCalls = false;
+    let currentTextBlockId = null;
+    let currentReasoningBlockId = null;
+    let blockCounter = 0;
+    const emittedSourceUrls = /* @__PURE__ */ new Set();
+    let lastCodeExecutionToolCallId;
+    return {
+      stream: response.pipeThrough(
+        new TransformStream({
+          start(controller) {
+            controller.enqueue({ type: "stream-start", warnings });
+          },
+          transform(chunk, controller) {
+            var _a16, _b16, _c, _d, _e, _f, _g;
+            if (options.includeRawChunks) {
+              controller.enqueue({ type: "raw", rawValue: chunk.rawValue });
+            }
+            if (!chunk.success) {
+              controller.enqueue({ type: "error", error: chunk.error });
+              return;
+            }
+            const value = chunk.value;
+            const usageMetadata = value.usageMetadata;
+            if (usageMetadata != null) {
+              usage = usageMetadata;
+            }
+            const candidate = (_a16 = value.candidates) == null ? void 0 : _a16[0];
+            if (candidate == null) {
+              return;
+            }
+            const content = candidate.content;
+            const sources = extractSources({
+              groundingMetadata: candidate.groundingMetadata,
+              generateId: generateId3
+            });
+            if (sources != null) {
+              for (const source of sources) {
+                if (source.sourceType === "url" && !emittedSourceUrls.has(source.url)) {
+                  emittedSourceUrls.add(source.url);
+                  controller.enqueue(source);
+                }
+              }
+            }
+            if (content != null) {
+              const parts = (_b16 = content.parts) != null ? _b16 : [];
+              for (const part of parts) {
+                if ("executableCode" in part && ((_c = part.executableCode) == null ? void 0 : _c.code)) {
+                  const toolCallId = generateId3();
+                  lastCodeExecutionToolCallId = toolCallId;
+                  controller.enqueue({
+                    type: "tool-call",
+                    toolCallId,
+                    toolName: "code_execution",
+                    input: JSON.stringify(part.executableCode),
+                    providerExecuted: true
+                  });
+                  hasToolCalls = true;
+                } else if ("codeExecutionResult" in part && part.codeExecutionResult) {
+                  const toolCallId = lastCodeExecutionToolCallId;
+                  if (toolCallId) {
+                    controller.enqueue({
+                      type: "tool-result",
+                      toolCallId,
+                      toolName: "code_execution",
+                      result: {
+                        outcome: part.codeExecutionResult.outcome,
+                        output: part.codeExecutionResult.output
+                      }
+                    });
+                    lastCodeExecutionToolCallId = void 0;
+                  }
+                } else if ("text" in part && part.text != null && part.text.length > 0) {
+                  if (part.thought === true) {
+                    if (currentTextBlockId !== null) {
+                      controller.enqueue({
+                        type: "text-end",
+                        id: currentTextBlockId
+                      });
+                      currentTextBlockId = null;
+                    }
+                    if (currentReasoningBlockId === null) {
+                      currentReasoningBlockId = String(blockCounter++);
+                      controller.enqueue({
+                        type: "reasoning-start",
+                        id: currentReasoningBlockId,
+                        providerMetadata: part.thoughtSignature ? {
+                          [providerOptionsName]: {
+                            thoughtSignature: part.thoughtSignature
+                          }
+                        } : void 0
+                      });
+                    }
+                    controller.enqueue({
+                      type: "reasoning-delta",
+                      id: currentReasoningBlockId,
+                      delta: part.text,
+                      providerMetadata: part.thoughtSignature ? {
+                        [providerOptionsName]: {
+                          thoughtSignature: part.thoughtSignature
+                        }
+                      } : void 0
+                    });
+                  } else {
+                    if (currentReasoningBlockId !== null) {
+                      controller.enqueue({
+                        type: "reasoning-end",
+                        id: currentReasoningBlockId
+                      });
+                      currentReasoningBlockId = null;
+                    }
+                    if (currentTextBlockId === null) {
+                      currentTextBlockId = String(blockCounter++);
+                      controller.enqueue({
+                        type: "text-start",
+                        id: currentTextBlockId,
+                        providerMetadata: part.thoughtSignature ? {
+                          [providerOptionsName]: {
+                            thoughtSignature: part.thoughtSignature
+                          }
+                        } : void 0
+                      });
+                    }
+                    controller.enqueue({
+                      type: "text-delta",
+                      id: currentTextBlockId,
+                      delta: part.text,
+                      providerMetadata: part.thoughtSignature ? {
+                        [providerOptionsName]: {
+                          thoughtSignature: part.thoughtSignature
+                        }
+                      } : void 0
+                    });
+                  }
+                } else if ("inlineData" in part) {
+                  controller.enqueue({
+                    type: "file",
+                    mediaType: part.inlineData.mimeType,
+                    data: part.inlineData.data
+                  });
+                }
+              }
+              const toolCallDeltas = getToolCallsFromParts({
+                parts: content.parts,
+                generateId: generateId3,
+                providerOptionsName
+              });
+              if (toolCallDeltas != null) {
+                for (const toolCall of toolCallDeltas) {
+                  controller.enqueue({
+                    type: "tool-input-start",
+                    id: toolCall.toolCallId,
+                    toolName: toolCall.toolName,
+                    providerMetadata: toolCall.providerMetadata
+                  });
+                  controller.enqueue({
+                    type: "tool-input-delta",
+                    id: toolCall.toolCallId,
+                    delta: toolCall.args,
+                    providerMetadata: toolCall.providerMetadata
+                  });
+                  controller.enqueue({
+                    type: "tool-input-end",
+                    id: toolCall.toolCallId,
+                    providerMetadata: toolCall.providerMetadata
+                  });
+                  controller.enqueue({
+                    type: "tool-call",
+                    toolCallId: toolCall.toolCallId,
+                    toolName: toolCall.toolName,
+                    input: toolCall.args,
+                    providerMetadata: toolCall.providerMetadata
+                  });
+                  hasToolCalls = true;
+                }
+              }
+            }
+            if (candidate.finishReason != null) {
+              finishReason = {
+                unified: mapGoogleGenerativeAIFinishReason({
+                  finishReason: candidate.finishReason,
+                  hasToolCalls
+                }),
+                raw: candidate.finishReason
+              };
+              providerMetadata = {
+                [providerOptionsName]: {
+                  promptFeedback: (_d = value.promptFeedback) != null ? _d : null,
+                  groundingMetadata: (_e = candidate.groundingMetadata) != null ? _e : null,
+                  urlContextMetadata: (_f = candidate.urlContextMetadata) != null ? _f : null,
+                  safetyRatings: (_g = candidate.safetyRatings) != null ? _g : null
+                }
+              };
+              if (usageMetadata != null) {
+                providerMetadata[providerOptionsName].usageMetadata = usageMetadata;
+              }
+            }
+          },
+          flush(controller) {
+            if (currentTextBlockId !== null) {
+              controller.enqueue({
+                type: "text-end",
+                id: currentTextBlockId
+              });
+            }
+            if (currentReasoningBlockId !== null) {
+              controller.enqueue({
+                type: "reasoning-end",
+                id: currentReasoningBlockId
+              });
+            }
+            controller.enqueue({
+              type: "finish",
+              finishReason,
+              usage: convertGoogleGenerativeAIUsage(usage),
+              providerMetadata
+            });
+          }
+        })
+      ),
+      response: { headers: responseHeaders },
+      request: { body: args }
+    };
+  }
+};
+function getToolCallsFromParts({
+  parts,
+  generateId: generateId3,
+  providerOptionsName
+}) {
+  const functionCallParts = parts == null ? void 0 : parts.filter(
+    (part) => "functionCall" in part
+  );
+  return functionCallParts == null || functionCallParts.length === 0 ? void 0 : functionCallParts.map((part) => ({
+    type: "tool-call",
+    toolCallId: generateId3(),
+    toolName: part.functionCall.name,
+    args: JSON.stringify(part.functionCall.args),
+    providerMetadata: part.thoughtSignature ? {
+      [providerOptionsName]: {
+        thoughtSignature: part.thoughtSignature
+      }
+    } : void 0
+  }));
+}
+__name(getToolCallsFromParts, "getToolCallsFromParts");
+function extractSources({
+  groundingMetadata,
+  generateId: generateId3
+}) {
+  var _a16, _b16, _c, _d, _e;
+  if (!(groundingMetadata == null ? void 0 : groundingMetadata.groundingChunks)) {
+    return void 0;
+  }
+  const sources = [];
+  for (const chunk of groundingMetadata.groundingChunks) {
+    if (chunk.web != null) {
+      sources.push({
+        type: "source",
+        sourceType: "url",
+        id: generateId3(),
+        url: chunk.web.uri,
+        title: (_a16 = chunk.web.title) != null ? _a16 : void 0
+      });
+    } else if (chunk.retrievedContext != null) {
+      const uri = chunk.retrievedContext.uri;
+      const fileSearchStore = chunk.retrievedContext.fileSearchStore;
+      if (uri && (uri.startsWith("http://") || uri.startsWith("https://"))) {
+        sources.push({
+          type: "source",
+          sourceType: "url",
+          id: generateId3(),
+          url: uri,
+          title: (_b16 = chunk.retrievedContext.title) != null ? _b16 : void 0
+        });
+      } else if (uri) {
+        const title = (_c = chunk.retrievedContext.title) != null ? _c : "Unknown Document";
+        let mediaType = "application/octet-stream";
+        let filename = void 0;
+        if (uri.endsWith(".pdf")) {
+          mediaType = "application/pdf";
+          filename = uri.split("/").pop();
+        } else if (uri.endsWith(".txt")) {
+          mediaType = "text/plain";
+          filename = uri.split("/").pop();
+        } else if (uri.endsWith(".docx")) {
+          mediaType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+          filename = uri.split("/").pop();
+        } else if (uri.endsWith(".doc")) {
+          mediaType = "application/msword";
+          filename = uri.split("/").pop();
+        } else if (uri.match(/\.(md|markdown)$/)) {
+          mediaType = "text/markdown";
+          filename = uri.split("/").pop();
+        } else {
+          filename = uri.split("/").pop();
+        }
+        sources.push({
+          type: "source",
+          sourceType: "document",
+          id: generateId3(),
+          mediaType,
+          title,
+          filename
+        });
+      } else if (fileSearchStore) {
+        const title = (_d = chunk.retrievedContext.title) != null ? _d : "Unknown Document";
+        sources.push({
+          type: "source",
+          sourceType: "document",
+          id: generateId3(),
+          mediaType: "application/octet-stream",
+          title,
+          filename: fileSearchStore.split("/").pop()
+        });
+      }
+    } else if (chunk.maps != null) {
+      if (chunk.maps.uri) {
+        sources.push({
+          type: "source",
+          sourceType: "url",
+          id: generateId3(),
+          url: chunk.maps.uri,
+          title: (_e = chunk.maps.title) != null ? _e : void 0
+        });
+      }
+    }
+  }
+  return sources.length > 0 ? sources : void 0;
+}
+__name(extractSources, "extractSources");
+var getGroundingMetadataSchema = /* @__PURE__ */ __name(() => external_exports.object({
+  webSearchQueries: external_exports.array(external_exports.string()).nullish(),
+  retrievalQueries: external_exports.array(external_exports.string()).nullish(),
+  searchEntryPoint: external_exports.object({ renderedContent: external_exports.string() }).nullish(),
+  groundingChunks: external_exports.array(
+    external_exports.object({
+      web: external_exports.object({ uri: external_exports.string(), title: external_exports.string().nullish() }).nullish(),
+      retrievedContext: external_exports.object({
+        uri: external_exports.string().nullish(),
+        title: external_exports.string().nullish(),
+        text: external_exports.string().nullish(),
+        fileSearchStore: external_exports.string().nullish()
+      }).nullish(),
+      maps: external_exports.object({
+        uri: external_exports.string().nullish(),
+        title: external_exports.string().nullish(),
+        text: external_exports.string().nullish(),
+        placeId: external_exports.string().nullish()
+      }).nullish()
+    })
+  ).nullish(),
+  groundingSupports: external_exports.array(
+    external_exports.object({
+      segment: external_exports.object({
+        startIndex: external_exports.number().nullish(),
+        endIndex: external_exports.number().nullish(),
+        text: external_exports.string().nullish()
+      }),
+      segment_text: external_exports.string().nullish(),
+      groundingChunkIndices: external_exports.array(external_exports.number()).nullish(),
+      supportChunkIndices: external_exports.array(external_exports.number()).nullish(),
+      confidenceScores: external_exports.array(external_exports.number()).nullish(),
+      confidenceScore: external_exports.array(external_exports.number()).nullish()
+    })
+  ).nullish(),
+  retrievalMetadata: external_exports.union([
+    external_exports.object({
+      webDynamicRetrievalScore: external_exports.number()
+    }),
+    external_exports.object({})
+  ]).nullish()
+}), "getGroundingMetadataSchema");
+var getContentSchema = /* @__PURE__ */ __name(() => external_exports.object({
+  parts: external_exports.array(
+    external_exports.union([
+      // note: order matters since text can be fully empty
+      external_exports.object({
+        functionCall: external_exports.object({
+          name: external_exports.string(),
+          args: external_exports.unknown()
+        }),
+        thoughtSignature: external_exports.string().nullish()
+      }),
+      external_exports.object({
+        inlineData: external_exports.object({
+          mimeType: external_exports.string(),
+          data: external_exports.string()
+        }),
+        thoughtSignature: external_exports.string().nullish()
+      }),
+      external_exports.object({
+        executableCode: external_exports.object({
+          language: external_exports.string(),
+          code: external_exports.string()
+        }).nullish(),
+        codeExecutionResult: external_exports.object({
+          outcome: external_exports.string(),
+          output: external_exports.string()
+        }).nullish(),
+        text: external_exports.string().nullish(),
+        thought: external_exports.boolean().nullish(),
+        thoughtSignature: external_exports.string().nullish()
+      })
+    ])
+  ).nullish()
+}), "getContentSchema");
+var getSafetyRatingSchema = /* @__PURE__ */ __name(() => external_exports.object({
+  category: external_exports.string().nullish(),
+  probability: external_exports.string().nullish(),
+  probabilityScore: external_exports.number().nullish(),
+  severity: external_exports.string().nullish(),
+  severityScore: external_exports.number().nullish(),
+  blocked: external_exports.boolean().nullish()
+}), "getSafetyRatingSchema");
+var usageSchema = external_exports.object({
+  cachedContentTokenCount: external_exports.number().nullish(),
+  thoughtsTokenCount: external_exports.number().nullish(),
+  promptTokenCount: external_exports.number().nullish(),
+  candidatesTokenCount: external_exports.number().nullish(),
+  totalTokenCount: external_exports.number().nullish(),
+  // https://cloud.google.com/vertex-ai/generative-ai/docs/reference/rest/v1/GenerateContentResponse#TrafficType
+  trafficType: external_exports.string().nullish()
+});
+var getUrlContextMetadataSchema = /* @__PURE__ */ __name(() => external_exports.object({
+  urlMetadata: external_exports.array(
+    external_exports.object({
+      retrievedUrl: external_exports.string(),
+      urlRetrievalStatus: external_exports.string()
+    })
+  )
+}), "getUrlContextMetadataSchema");
+var responseSchema = lazySchema(
+  () => zodSchema(
+    external_exports.object({
+      candidates: external_exports.array(
+        external_exports.object({
+          content: getContentSchema().nullish().or(external_exports.object({}).strict()),
+          finishReason: external_exports.string().nullish(),
+          safetyRatings: external_exports.array(getSafetyRatingSchema()).nullish(),
+          groundingMetadata: getGroundingMetadataSchema().nullish(),
+          urlContextMetadata: getUrlContextMetadataSchema().nullish()
+        })
+      ),
+      usageMetadata: usageSchema.nullish(),
+      promptFeedback: external_exports.object({
+        blockReason: external_exports.string().nullish(),
+        safetyRatings: external_exports.array(getSafetyRatingSchema()).nullish()
+      }).nullish()
+    })
+  )
+);
+var chunkSchema = lazySchema(
+  () => zodSchema(
+    external_exports.object({
+      candidates: external_exports.array(
+        external_exports.object({
+          content: getContentSchema().nullish(),
+          finishReason: external_exports.string().nullish(),
+          safetyRatings: external_exports.array(getSafetyRatingSchema()).nullish(),
+          groundingMetadata: getGroundingMetadataSchema().nullish(),
+          urlContextMetadata: getUrlContextMetadataSchema().nullish()
+        })
+      ).nullish(),
+      usageMetadata: usageSchema.nullish(),
+      promptFeedback: external_exports.object({
+        blockReason: external_exports.string().nullish(),
+        safetyRatings: external_exports.array(getSafetyRatingSchema()).nullish()
+      }).nullish()
+    })
+  )
+);
+var codeExecution = createProviderToolFactoryWithOutputSchema({
+  id: "google.code_execution",
+  inputSchema: external_exports.object({
+    language: external_exports.string().describe("The programming language of the code."),
+    code: external_exports.string().describe("The code to be executed.")
+  }),
+  outputSchema: external_exports.object({
+    outcome: external_exports.string().describe('The outcome of the execution (e.g., "OUTCOME_OK").'),
+    output: external_exports.string().describe("The output from the code execution.")
+  })
+});
+var enterpriseWebSearch = createProviderToolFactory({
+  id: "google.enterprise_web_search",
+  inputSchema: lazySchema(() => zodSchema(external_exports.object({})))
+});
+var fileSearchArgsBaseSchema = external_exports.object({
+  /** The names of the file_search_stores to retrieve from.
+   *  Example: `fileSearchStores/my-file-search-store-123`
+   */
+  fileSearchStoreNames: external_exports.array(external_exports.string()).describe(
+    "The names of the file_search_stores to retrieve from. Example: `fileSearchStores/my-file-search-store-123`"
+  ),
+  /** The number of file search retrieval chunks to retrieve. */
+  topK: external_exports.number().int().positive().describe("The number of file search retrieval chunks to retrieve.").optional(),
+  /** Metadata filter to apply to the file search retrieval documents.
+   *  See https://google.aip.dev/160 for the syntax of the filter expression.
+   */
+  metadataFilter: external_exports.string().describe(
+    "Metadata filter to apply to the file search retrieval documents. See https://google.aip.dev/160 for the syntax of the filter expression."
+  ).optional()
+}).passthrough();
+var fileSearchArgsSchema = lazySchema(
+  () => zodSchema(fileSearchArgsBaseSchema)
+);
+var fileSearch = createProviderToolFactory({
+  id: "google.file_search",
+  inputSchema: fileSearchArgsSchema
+});
+var googleMaps = createProviderToolFactory({
+  id: "google.google_maps",
+  inputSchema: lazySchema(() => zodSchema(external_exports.object({})))
+});
+var googleSearch = createProviderToolFactory({
+  id: "google.google_search",
+  inputSchema: lazySchema(
+    () => zodSchema(
+      external_exports.object({
+        mode: external_exports.enum(["MODE_DYNAMIC", "MODE_UNSPECIFIED"]).default("MODE_UNSPECIFIED"),
+        dynamicThreshold: external_exports.number().default(1)
+      })
+    )
+  )
+});
+var urlContext = createProviderToolFactory({
+  id: "google.url_context",
+  inputSchema: lazySchema(() => zodSchema(external_exports.object({})))
+});
+var vertexRagStore = createProviderToolFactory({
+  id: "google.vertex_rag_store",
+  inputSchema: external_exports.object({
+    ragCorpus: external_exports.string(),
+    topK: external_exports.number().optional()
+  })
+});
+var googleTools = {
+  /**
+   * Creates a Google search tool that gives Google direct access to real-time web content.
+   * Must have name "google_search".
+   */
+  googleSearch,
+  /**
+   * Creates an Enterprise Web Search tool for grounding responses using a compliance-focused web index.
+   * Designed for highly-regulated industries (finance, healthcare, public sector).
+   * Does not log customer data and supports VPC service controls.
+   * Must have name "enterprise_web_search".
+   *
+   * @note Only available on Vertex AI. Requires Gemini 2.0 or newer.
+   *
+   * @see https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/web-grounding-enterprise
+   */
+  enterpriseWebSearch,
+  /**
+   * Creates a Google Maps grounding tool that gives the model access to Google Maps data.
+   * Must have name "google_maps".
+   *
+   * @see https://ai.google.dev/gemini-api/docs/maps-grounding
+   * @see https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-with-google-maps
+   */
+  googleMaps,
+  /**
+   * Creates a URL context tool that gives Google direct access to real-time web content.
+   * Must have name "url_context".
+   */
+  urlContext,
+  /**
+   * Enables Retrieval Augmented Generation (RAG) via the Gemini File Search tool.
+   * Must have name "file_search".
+   *
+   * @param fileSearchStoreNames - Fully-qualified File Search store resource names.
+   * @param metadataFilter - Optional filter expression to restrict the files that can be retrieved.
+   * @param topK - Optional result limit for the number of chunks returned from File Search.
+   *
+   * @see https://ai.google.dev/gemini-api/docs/file-search
+   */
+  fileSearch,
+  /**
+   * A tool that enables the model to generate and run Python code.
+   * Must have name "code_execution".
+   *
+   * @note Ensure the selected model supports Code Execution.
+   * Multi-tool usage with the code execution tool is typically compatible with Gemini >=2 models.
+   *
+   * @see https://ai.google.dev/gemini-api/docs/code-execution (Google AI)
+   * @see https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/code-execution-api (Vertex AI)
+   */
+  codeExecution,
+  /**
+   * Creates a Vertex RAG Store tool that enables the model to perform RAG searches against a Vertex RAG Store.
+   * Must have name "vertex_rag_store".
+   */
+  vertexRagStore
+};
+var GoogleGenerativeAIImageModel = class {
+  static {
+    __name(this, "GoogleGenerativeAIImageModel");
+  }
+  constructor(modelId, settings, config) {
+    this.modelId = modelId;
+    this.settings = settings;
+    this.config = config;
+    this.specificationVersion = "v3";
+  }
+  get maxImagesPerCall() {
+    var _a16;
+    return (_a16 = this.settings.maxImagesPerCall) != null ? _a16 : 4;
+  }
+  get provider() {
+    return this.config.provider;
+  }
+  async doGenerate(options) {
+    var _a16, _b16, _c;
+    const {
+      prompt,
+      n = 1,
+      size,
+      aspectRatio = "1:1",
+      seed,
+      providerOptions,
+      headers,
+      abortSignal,
+      files,
+      mask
+    } = options;
+    const warnings = [];
+    if (files != null && files.length > 0) {
+      throw new Error(
+        "Google Generative AI does not support image editing. Use Google Vertex AI (@ai-sdk/google-vertex) for image editing capabilities."
+      );
+    }
+    if (mask != null) {
+      throw new Error(
+        "Google Generative AI does not support image editing with masks. Use Google Vertex AI (@ai-sdk/google-vertex) for image editing capabilities."
+      );
+    }
+    if (size != null) {
+      warnings.push({
+        type: "unsupported",
+        feature: "size",
+        details: "This model does not support the `size` option. Use `aspectRatio` instead."
+      });
+    }
+    if (seed != null) {
+      warnings.push({
+        type: "unsupported",
+        feature: "seed",
+        details: "This model does not support the `seed` option through this provider."
+      });
+    }
+    const googleOptions = await parseProviderOptions({
+      provider: "google",
+      providerOptions,
+      schema: googleImageProviderOptionsSchema
+    });
+    const currentDate = (_c = (_b16 = (_a16 = this.config._internal) == null ? void 0 : _a16.currentDate) == null ? void 0 : _b16.call(_a16)) != null ? _c : /* @__PURE__ */ new Date();
+    const parameters = {
+      sampleCount: n
+    };
+    if (aspectRatio != null) {
+      parameters.aspectRatio = aspectRatio;
+    }
+    if (googleOptions) {
+      Object.assign(parameters, googleOptions);
+    }
+    const body = {
+      instances: [{ prompt }],
+      parameters
+    };
+    const { responseHeaders, value: response } = await postJsonToApi({
+      url: `${this.config.baseURL}/models/${this.modelId}:predict`,
+      headers: combineHeaders(await resolve(this.config.headers), headers),
+      body,
+      failedResponseHandler: googleFailedResponseHandler,
+      successfulResponseHandler: createJsonResponseHandler(
+        googleImageResponseSchema
+      ),
+      abortSignal,
+      fetch: this.config.fetch
+    });
+    return {
+      images: response.predictions.map(
+        (p) => p.bytesBase64Encoded
+      ),
+      warnings: warnings != null ? warnings : [],
+      providerMetadata: {
+        google: {
+          images: response.predictions.map((prediction) => ({
+            // Add any prediction-specific metadata here
+          }))
+        }
+      },
+      response: {
+        timestamp: currentDate,
+        modelId: this.modelId,
+        headers: responseHeaders
+      }
+    };
+  }
+};
+var googleImageResponseSchema = lazySchema(
+  () => zodSchema(
+    external_exports.object({
+      predictions: external_exports.array(external_exports.object({ bytesBase64Encoded: external_exports.string() })).default([])
+    })
+  )
+);
+var googleImageProviderOptionsSchema = lazySchema(
+  () => zodSchema(
+    external_exports.object({
+      personGeneration: external_exports.enum(["dont_allow", "allow_adult", "allow_all"]).nullish(),
+      aspectRatio: external_exports.enum(["1:1", "3:4", "4:3", "9:16", "16:9"]).nullish()
+    })
+  )
+);
+function createGoogleGenerativeAI(options = {}) {
+  var _a16, _b16;
+  const baseURL = (_a16 = withoutTrailingSlash(options.baseURL)) != null ? _a16 : "https://generativelanguage.googleapis.com/v1beta";
+  const providerName = (_b16 = options.name) != null ? _b16 : "google.generative-ai";
+  const getHeaders = /* @__PURE__ */ __name(() => withUserAgentSuffix(
+    {
+      "x-goog-api-key": loadApiKey({
+        apiKey: options.apiKey,
+        environmentVariableName: "GOOGLE_GENERATIVE_AI_API_KEY",
+        description: "Google Generative AI"
+      }),
+      ...options.headers
+    },
+    `ai-sdk/google/${VERSION2}`
+  ), "getHeaders");
+  const createChatModel = /* @__PURE__ */ __name((modelId) => {
+    var _a22;
+    return new GoogleGenerativeAILanguageModel(modelId, {
+      provider: providerName,
+      baseURL,
+      headers: getHeaders,
+      generateId: (_a22 = options.generateId) != null ? _a22 : generateId,
+      supportedUrls: /* @__PURE__ */ __name(() => ({
+        "*": [
+          // Google Generative Language "files" endpoint
+          // e.g. https://generativelanguage.googleapis.com/v1beta/files/...
+          new RegExp(`^${baseURL}/files/.*$`),
+          // YouTube URLs (public or unlisted videos)
+          new RegExp(
+            `^https://(?:www\\.)?youtube\\.com/watch\\?v=[\\w-]+(?:&[\\w=&.-]*)?$`
+          ),
+          new RegExp(`^https://youtu\\.be/[\\w-]+(?:\\?[\\w=&.-]*)?$`)
+        ]
+      }), "supportedUrls"),
+      fetch: options.fetch
+    });
+  }, "createChatModel");
+  const createEmbeddingModel = /* @__PURE__ */ __name((modelId) => new GoogleGenerativeAIEmbeddingModel(modelId, {
+    provider: providerName,
+    baseURL,
+    headers: getHeaders,
+    fetch: options.fetch
+  }), "createEmbeddingModel");
+  const createImageModel = /* @__PURE__ */ __name((modelId, settings = {}) => new GoogleGenerativeAIImageModel(modelId, settings, {
+    provider: providerName,
+    baseURL,
+    headers: getHeaders,
+    fetch: options.fetch
+  }), "createImageModel");
+  const provider = /* @__PURE__ */ __name(function(modelId) {
+    if (new.target) {
+      throw new Error(
+        "The Google Generative AI model function cannot be called with the new keyword."
+      );
+    }
+    return createChatModel(modelId);
+  }, "provider");
+  provider.specificationVersion = "v3";
+  provider.languageModel = createChatModel;
+  provider.chat = createChatModel;
+  provider.generativeAI = createChatModel;
+  provider.embedding = createEmbeddingModel;
+  provider.embeddingModel = createEmbeddingModel;
+  provider.textEmbedding = createEmbeddingModel;
+  provider.textEmbeddingModel = createEmbeddingModel;
+  provider.image = createImageModel;
+  provider.imageModel = createImageModel;
+  provider.tools = googleTools;
+  return provider;
+}
+__name(createGoogleGenerativeAI, "createGoogleGenerativeAI");
+var google = createGoogleGenerativeAI();
+
+// trigger/generate-spec.ts
+var nodeSchema = external_exports.object({
+  id: external_exports.string(),
+  type: external_exports.string().optional(),
+  position: external_exports.object({ x: external_exports.number(), y: external_exports.number() }),
+  data: external_exports.object({
+    label: external_exports.string(),
+    color: external_exports.string().optional(),
+    shape: external_exports.string().optional()
+  }),
+  width: external_exports.number().optional(),
+  height: external_exports.number().optional()
+});
+var edgeSchema = external_exports.object({
+  id: external_exports.string(),
+  source: external_exports.string(),
+  target: external_exports.string(),
+  data: external_exports.object({ label: external_exports.string().optional() }).optional()
+});
+var chatMessageSchema = external_exports.object({
+  id: external_exports.string(),
+  sender: external_exports.string(),
+  role: external_exports.enum(["user", "assistant"]),
+  content: external_exports.string(),
+  timestamp: external_exports.string(),
+  source: external_exports.enum(["architect", "chat"]).optional()
+});
+var inputSchema = external_exports.object({
+  projectId: external_exports.string().min(1),
+  roomId: external_exports.string().min(1),
+  chatHistory: external_exports.array(chatMessageSchema).default([]),
+  nodes: external_exports.array(nodeSchema).default([]),
+  edges: external_exports.array(edgeSchema).default([])
+});
+function buildCanvasDescription(nodes, edges) {
+  const nodeLines = nodes.map(
+    (n) => `- ${n.id} [${n.data.shape ?? "rectangle"}]: "${n.data.label}"` + (n.data.color ? ` (color: ${n.data.color})` : "")
+  );
+  const nodeMap = new Map(nodes.map((n) => [n.id, n.data.label]));
+  const edgeLines = edges.map((e) => {
+    const sourceLabel = nodeMap.get(e.source) ?? e.source;
+    const targetLabel = nodeMap.get(e.target) ?? e.target;
+    const label = e.data?.label ? ` [${e.data.label}]` : "";
+    return `- ${sourceLabel} → ${targetLabel}${label}`;
+  });
+  const parts = [];
+  if (nodeLines.length > 0) {
+    parts.push("## Components\n" + nodeLines.join("\n"));
+  }
+  if (edgeLines.length > 0) {
+    parts.push("## Connections\n" + edgeLines.join("\n"));
+  }
+  return parts.join("\n\n");
+}
+__name(buildCanvasDescription, "buildCanvasDescription");
+function buildChatSummary(chatHistory) {
+  const architectMessages = chatHistory.filter(
+    (m) => !m.source || m.source === "architect"
+  );
+  if (architectMessages.length === 0) return "";
+  const lines = architectMessages.map(
+    (m) => `${m.role === "user" ? "User" : "AI"}: ${m.content}`
+  );
+  return "## Design Conversation\n" + lines.join("\n");
+}
+__name(buildChatSummary, "buildChatSummary");
+var SYSTEM_PROMPT = `You are Ghost AI, a senior software architect. Generate a thorough technical specification document in Markdown for the system architecture shown in the canvas.
+
+The specification should include:
+1. **System Overview** — purpose, high-level summary, and key design goals
+2. **Architecture Components** — description of each component, its role, and responsibilities
+3. **Data Flow** — how data moves between components, including key interactions
+4. **API Contracts** — notable interfaces or communication patterns between services
+5. **Technology Considerations** — relevant tech stack choices, protocols, or constraints implied by the design
+6. **Scalability & Reliability** — potential bottlenecks, failure modes, and mitigation strategies
+7. **Security Considerations** — authentication, authorization, and data protection concerns
+
+Write in clear technical prose. Use headers, bullet points, and code blocks where appropriate. Output plain Markdown only — no preamble or explanation outside the document itself.`;
+var generateSpec = schemaTask({
+  id: "generate-spec",
+  schema: inputSchema,
+  retry: {
+    maxAttempts: 3,
+    factor: 2,
+    minTimeoutInMs: 1e3,
+    maxTimeoutInMs: 1e4,
+    randomize: true
+  },
+  run: /* @__PURE__ */ __name(async (payload) => {
+    logger.info("generate-spec started", {
+      projectId: payload.projectId,
+      roomId: payload.roomId,
+      nodeCount: payload.nodes.length,
+      edgeCount: payload.edges.length
+    });
+    metadata.set("status", "generating").set("progress", 0);
+    const canvasDescription = buildCanvasDescription(
+      payload.nodes,
+      payload.edges
+    );
+    const chatSummary = buildChatSummary(payload.chatHistory);
+    const userPrompt = [
+      "Generate a technical specification for the following system architecture.",
+      "",
+      canvasDescription,
+      chatSummary ? "\n" + chatSummary : ""
+    ].filter(Boolean).join("\n");
+    metadata.set("progress", 25).set("status", "calling_ai");
+    logger.info("Calling Gemini for spec generation");
+    const { text } = await generateText({
+      model: google("gemini-2.0-flash"),
+      system: SYSTEM_PROMPT,
+      prompt: userPrompt
+    });
+    metadata.set("progress", 90).set("status", "finalizing");
+    logger.info("generate-spec complete", { specLength: text.length });
+    metadata.set("progress", 100).set("status", "complete");
+    return { spec: text };
+  }, "run")
+});
+export {
+  generateSpec
+};
+//# sourceMappingURL=generate-spec.mjs.map

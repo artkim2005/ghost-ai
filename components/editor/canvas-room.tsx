@@ -1,11 +1,7 @@
 "use client"
 
 import { Component, type ReactNode } from "react"
-import {
-  LiveblocksProvider,
-  RoomProvider,
-  ClientSideSuspense,
-} from "@liveblocks/react"
+import { ClientSideSuspense } from "@liveblocks/react"
 import { CanvasFlow } from "./canvas-flow"
 import type { CanvasTemplate } from "./starter-templates"
 import type { SaveStatus } from "@/hooks/use-autosave"
@@ -42,37 +38,30 @@ interface CanvasRoomProps {
 
 export function CanvasRoom({ roomId, pendingTemplate, onTemplateApplied, onSaveStatusChange, onSaveReady }: CanvasRoomProps) {
   return (
-    <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
-      <RoomProvider
-        id={roomId}
-        initialPresence={{ cursor: null, thinking: false }}
+    <CanvasErrorBoundary
+      fallback={
+        <div className="flex h-full items-center justify-center">
+          <p className="text-sm text-copy-faint">
+            Connection error. Please reload.
+          </p>
+        </div>
+      }
+    >
+      <ClientSideSuspense
+        fallback={
+          <div className="flex h-full items-center justify-center">
+            <p className="text-sm text-copy-faint">Loading canvas…</p>
+          </div>
+        }
       >
-        <CanvasErrorBoundary
-          fallback={
-            <div className="flex h-full items-center justify-center">
-              <p className="text-sm text-copy-faint">
-                Connection error. Please reload.
-              </p>
-            </div>
-          }
-        >
-          <ClientSideSuspense
-            fallback={
-              <div className="flex h-full items-center justify-center">
-                <p className="text-sm text-copy-faint">Loading canvas…</p>
-              </div>
-            }
-          >
-            <CanvasFlow
-              pendingTemplate={pendingTemplate}
-              onTemplateApplied={onTemplateApplied}
-              projectId={roomId}
-              onSaveStatusChange={onSaveStatusChange}
-              onSaveReady={onSaveReady}
-            />
-          </ClientSideSuspense>
-        </CanvasErrorBoundary>
-      </RoomProvider>
-    </LiveblocksProvider>
+        <CanvasFlow
+          pendingTemplate={pendingTemplate}
+          onTemplateApplied={onTemplateApplied}
+          projectId={roomId}
+          onSaveStatusChange={onSaveStatusChange}
+          onSaveReady={onSaveReady}
+        />
+      </ClientSideSuspense>
+    </CanvasErrorBoundary>
   )
 }

@@ -45,3 +45,23 @@ When dropping a shape from the shape toolbar onto the canvas, the node is placed
 - the current React Flow pan offset and zoom scale via screenToFlowPosition or project
 
 The node should appear with its center at the exact cursor position on drop.
+
+### 6. Editing Multi-line Text in Nodes is Glitchy
+
+When editing text inside a node that extends to multiple lines, the text condenses into a single line and a white box appears to the right that should not be there. When editing text, it should appear exactly how it does when it is not being edited; multiple lines should not condense into a single line.
+
+### 7. Highlighting Text in Nodes Drags the Node
+
+When highlighting text in nodes by dragging over it, the node gets dragged too. The node should stay in place while text is being dragged over when editing.
+
+### 8. Collaborator cannot reach Ghost AI
+
+When a collaborator sends a prompt to the AI in the architect tab, it says "Failed to reach Ghost AI. Please try again." However, it works when the owner sends a prompt. Analyze and fix this issue.
+
+### 9. Template Initial Placement
+
+Every time a template is imported, it is placed at the center of the canvas. Modify this behavior so that the template is placed where the user is currently panned to on the canvas.
+
+### 10. Importing Multiple Templates Causes Unintended Behavior
+
+When a template exists on the canvas and another different template is imported, the arrows from the initial template disappear. Additionally, if the same template is imported twice, it deletes the old version from the canvas and only keeps the new one. Fix this behavior.
